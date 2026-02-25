@@ -1,0 +1,108 @@
+# architecture
+arch: ViT2DClassifier
+use_2d: true  # Use 2D max-projection
+
+# wandb
+proj_name: opencell_localization
+run_name: ${proj_name}_2d_vit_base_pretrain_mask${pretrain_mask_ratio}
+wandb_id: None
+pretrain_mask_ratio: 0.9  # Mask ratio used in pretraining (for tracking)
+
+# dataset
+dataset: opencell_localization
+csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/
+localization_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-localization-annotations/opencell-localization-annotations.csv
+
+# output
+output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/localization_results/${run_name}
+ckpt_dir: ${output_dir}/ckpts
+
+# ========================================
+# Data Preprocessing & Augmentation (2D)
+# ========================================
+# IMPORTANT: Use same normalization as MAE2D pretraining
+
+# Intensity Normalization (must match MAE2D training)
+channel_wise_norm: true  # CRITICAL: Must match MAE2D pretraining
+intensity_augmentation: true  # Apply augmentation during fine-tuning
+
+# Optional: Intensity clipping (keep as None to match MAE2D)
+a_min: None
+a_max: None
+b_min: None
+b_max: None
+
+# Spatial Augmentation
+RandFlipd_prob: 0.2
+RandRotate90d_prob: 0.2
+
+# Intensity Augmentation
+RandScaleIntensityd_prob: 0.1
+scale_intensity_factor: 0.1
+RandShiftIntensityd_prob: 0.1
+shift_intensity_offset: 0.1
+
+# trainer
+trainer_name: LocalizationTrainer
+batch_size: 8  # Larger batch size for 2D
+start_epoch: 0
+warmup_epochs: 2
+epochs: 50
+workers: 8
+resume: None
+cache_rate: 0.0
+eval_freq: 1
+
+# model architecture (2D version)
+input_size:
+  - 176  # H
+  - 176  # W
+patch_size: [8, 8]  # 2D patches
+in_chans: 2
+num_classes: 17
+encoder_embed_dim: 384
+encoder_depth: 6
+encoder_num_heads: 6
+pos_embed_type: 'sincos'
+use_global_pool: true
+drop_path: 0.1
+
+# grade weights
+grade_weights:
+  3: 1.0
+  2: 0.5
+  1: 0.25
+
+# pretrained weights (update this path when you have a 2D pretrained model)
+# pretrain: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_2d/mae2d_vit_base_opencell/mae2d_vit_base_opencell/ckpts/checkpoint_0009.pth.tar  # Set to MAE2D checkpoint path when available
+pretrain: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_2d/mae2d_vit_base_opencell_mask${pretrain_mask_ratio}/mae2d_vit_base_opencell_mask${pretrain_mask_ratio}/ckpts/checkpoint_0009.pth.tar  # Set to MAE2D checkpoint path when available
+
+# fine-tuning strategy
+freeze_encoder: true  # If true, only train classification head (linear probing). If false, train entire model.
+
+# optimizer
+lr: 1e-3  # Higher learning rate for linear probing (use 1e-4 for full fine-tuning)
+beta1: 0.9
+beta2: 0.999
+weight_decay: 0.05
+gradient_accumulation_steps: 1  # Number of steps to accumulate gradients (1=no accumulation)
+
+# logging
+save_freq: 5
+print_freq: 50
+
+# distributed processing
+gpu: 0
+dist_url: null
+world_size: 1
+multiprocessing_distributed: false
+dist_backend: nccl
+distributed: false
+rank: 0
+ngpus_per_node: 1
+
+# randomness
+seed: 42
+
+# debugging
+debug: false

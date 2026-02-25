@@ -1,0 +1,180 @@
+# ========================================
+# OpenCell MAE 3D with Cross-Attention and Distillation (From Scratch)
+# ========================================
+# This config trains MAE3D with cross-attention and SubCell distillation
+# from scratch (no pre-trained weights). Single-stage training.
+
+# Architecture
+arch: vit_base_cross_attn_distill
+enc_arch: ChannelCrossAttentionEncoder
+dec_arch: ChannelCrossAttentionDecoder
+
+# WandB Logging
+proj_name: mae3d_cross_attention_distill
+run_name: ${proj_name}_${arch}_${dataset}_${distill_loss_type}_scratch
+wandb_id: None
+
+# Dataset
+dataset: opencell
+json_list: null
+data_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/single_cell_dataset
+csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/
+
+# Teacher embeddings (SubCell)
+embedding_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell_embeddings/subcell
+
+# Output
+output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_3d_cross_attention_distill_scratch/${run_name}
+ckpt_dir: ${output_dir}/ckpts
+
+# ========================================
+# Pre-trained Checkpoint
+# ========================================
+# No pre-trained weights — training from scratch
+resume: null
+
+# ========================================
+# Data Preprocessing & Augmentation
+# ========================================
+
+# Spatial resampling
+space_x: 1.0
+space_y: 1.0
+space_z: 1.0
+
+# ROI size (input size for the model)
+roi_x: 176
+roi_y: 176
+roi_z: 100
+
+# Intensity Normalization
+channel_wise_norm: true
+intensity_augmentation: true
+
+# Intensity clipping
+a_min: None
+a_max: None
+b_min: None
+b_max: None
+
+# Spatial Augmentation
+RandFlipd_prob: 0.2
+RandRotate90d_prob: 0.2
+
+# Intensity Augmentation
+RandScaleIntensityd_prob: 0.1
+scale_intensity_factor: 0.1
+RandShiftIntensityd_prob: 0.1
+shift_intensity_offset: 0.1
+
+# ========================================
+# Trainer Configuration
+# ========================================
+
+trainer_name: MAE3DChannelCrossAttentionDistillTrainer
+batch_size: 8  # Per GPU batch size
+vis_batch_size: None
+start_epoch: 0
+warmup_epochs: 4
+epochs: 10
+workers: 8
+cache_rate: 0.0
+
+# ========================================
+# Model Architecture
+# ========================================
+
+patchembed: 'PatchEmbed3D'
+pos_embed_type: 'sincos'
+mask_ratio: 0.75
+input_size:
+  - ${roi_z}
+  - ${roi_y}
+  - ${roi_x}
+patch_size: [10, 8, 8]  # S_Z, S_Y, S_X
+in_chans: 2  # OpenCell has 2 channels: nucleus and protein
+
+# Encoder
+encoder_embed_dim: 384
+encoder_depth: 6
+encoder_num_heads: 6
+
+# Decoder
+decoder_embed_dim: 192
+decoder_depth: 4
+decoder_num_heads: 6
+
+# ========================================
+# Cross-Attention Settings
+# ========================================
+
+use_cross_attention: true
+cross_attention_type: position_wise
+
+# ========================================
+# Distillation Settings
+# ========================================
+
+# Teacher embedding dimension (SubCell = 1536)
+teacher_embed_dim: 1536
+
+# Student embedding extraction (matches ViT3DCrossAttentionClassifier)
+# If True, use global average pooling over spatial tokens (excluding CLS)
+# If False, use CLS tokens
+distill_use_global_pool: true
+
+# How to combine channel features: 'concat', 'mean', 'sum'
+# 'concat' gives embed_dim * 2 = 768 for 2 channels
+distill_pool_mode: concat
+
+# Distillation loss type: 'mse' (Euclidean) or 'cosine' (Cosine similarity)
+distill_loss_type: cosine
+
+# Distillation loss weight (multiplied with distillation loss)
+distill_weight: 1.0
+
+# Number of epochs to ramp up distillation weight (linear from 0 to distill_weight)
+distill_rampup_epochs: 2
+
+# Freeze decoder during ramp-up epochs (focus encoder on distillation alignment first)
+freeze_decoder_during_rampup: false
+
+# ========================================
+# Optimizer
+# ========================================
+
+type: adamw
+lr: 1.5e-4  # Standard MAE learning rate for training from scratch
+beta1: 0.9
+beta2: 0.95
+weight_decay: 0.05
+grad_clip: 1.0
+gradient_accumulation_steps: 1
+
+# ========================================
+# Logging & Checkpointing
+# ========================================
+
+vis_freq: 500
+save_freq: 1
+print_freq: 100
+
+# ========================================
+# Distributed Training
+# ========================================
+
+gpu: 0
+dist_url: null
+world_size: 1
+multiprocessing_distributed: false
+dist_backend: nccl
+distributed: false
+rank: 0
+ngpus_per_node: 1
+
+# ========================================
+# Other Settings
+# ========================================
+
+seed: 42
+debug: false

@@ -1,0 +1,111 @@
+# Embedding-based localization — 2D Cross-Attention FFT backbone, k-fold.
+#
+# Trains only a linear head on pre-extracted MAE embeddings (fast mode).
+# Run extract_mae2d_fft_kfold_embeddings.sbatch first to produce the .npy files.
+#
+# The encoder is never called; only the head is trained.
+# Embeddings are [B, 768] (embed_dim=384 * 2 channels, pool_mode=concat).
+#
+# NOTE: ViT3DCrossAttentionClassifier is used even for 2D embeddings because
+# its head dimension (768) matches the concat-pooled 2D cross-attention output.
+# The encoder architecture is irrelevant in embedding mode.
+
+# architecture
+arch: ViT3DCrossAttentionClassifier
+use_2d: false  # irrelevant in embedding mode
+
+cross_attention_type: 'position_wise'
+pool_mode: 'concat'  # head input dim = embed_dim * 2 = 768
+
+# wandb
+proj_name: opencell_localization_2d_fft_kfold
+run_name: ${proj_name}_emb_linear_probe
+wandb_id: None
+pretrain_mask_ratio: 0.75
+
+# dataset
+dataset: opencell_localization
+csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/kfold5/fold0
+localization_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-localization-annotations/opencell-localization-annotations.csv
+
+# output (overridden per fold via --opts output_dir=...)
+output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/localization_2d_fft_emb_kfold5/fold0
+ckpt_dir: ${output_dir}/ckpts
+
+# Embedding path — overridden per fold via --mae_embedding_path on the CLI
+mae_embedding_path: None
+
+# Augmentation — not used in embedding mode
+channel_wise_norm: true
+intensity_augmentation: false
+a_min: None
+a_max: None
+b_min: None
+b_max: None
+RandFlipd_prob: 0.0
+RandRotate90d_prob: 0.0
+RandScaleIntensityd_prob: 0.0
+scale_intensity_factor: 0.0
+RandShiftIntensityd_prob: 0.0
+shift_intensity_offset: 0.0
+
+# trainer
+trainer_name: LocalizationTrainer
+batch_size: 128  # large batch — only numpy arrays loaded per step
+start_epoch: 0
+warmup_epochs: 5
+epochs: 100
+workers: 4
+resume: None
+cache_rate: 0.0
+eval_freq: 1
+
+# model architecture — used only to build the model skeleton for the head;
+# the encoder is frozen and never called in embedding mode
+input_size:
+  - 100
+  - 176
+  - 176
+patch_size: [10, 8, 8]
+in_chans: 2
+num_classes: 17
+encoder_embed_dim: 384
+encoder_depth: 6
+encoder_num_heads: 6
+pos_embed_type: 'sincos'
+use_global_pool: true
+drop_path: 0.0
+
+# grade weights
+grade_weights:
+  3: 1.0
+  2: 0.5
+  1: 0.25
+
+# No pretrained weights needed — embeddings already extracted
+pretrain: None
+freeze_encoder: true
+
+# optimizer
+lr: 1e-3
+beta1: 0.9
+beta2: 0.999
+weight_decay: 0.05
+gradient_accumulation_steps: 1
+
+# logging
+save_freq: 10
+print_freq: 20
+
+# distributed
+gpu: 0
+dist_url: null
+world_size: 1
+multiprocessing_distributed: false
+dist_backend: nccl
+distributed: false
+rank: 0
+ngpus_per_node: 1
+
+seed: 42
+debug: false

@@ -1,0 +1,78 @@
+# WTC-11 localization — 2D Cross-Attention CLIP backbone, k-fold.
+# Embeddings: [B, 768]  (384 * 2 concat)
+
+arch: ViT3DCrossAttentionClassifier
+use_2d: false
+cross_attention_type: 'position_wise'
+pool_mode: 'concat'
+
+proj_name: wtc_localization_2d_clip_kfold
+run_name: ${proj_name}_emb_linear_probe
+wandb_id: None
+
+dataset: wtc_localization
+csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/kfold5/fold0
+
+output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/localization_2d_clip_emb_kfold5/fold0
+ckpt_dir: ${output_dir}/ckpts
+
+mae_embedding_path: None
+
+channel_wise_norm: true
+intensity_augmentation: false
+a_min: None
+a_max: None
+b_min: None
+b_max: None
+RandFlipd_prob: 0.0
+RandRotate90d_prob: 0.0
+RandScaleIntensityd_prob: 0.0
+scale_intensity_factor: 0.0
+RandShiftIntensityd_prob: 0.0
+shift_intensity_offset: 0.0
+
+trainer_name: LocalizationWTCTrainer
+batch_size: 256
+start_epoch: 0
+warmup_epochs: 5
+epochs: 100
+workers: 4
+resume: None
+cache_rate: 0.0
+eval_freq: 1
+
+input_size: [80, 224, 224]
+patch_size: [10, 8, 8]
+in_chans: 2
+num_classes: 15
+encoder_embed_dim: 384
+encoder_depth: 6
+encoder_num_heads: 6
+pos_embed_type: 'sincos'
+use_global_pool: true
+drop_path: 0.0
+
+grade_weights: None
+pretrain: None
+freeze_encoder: true
+
+lr: 1e-3
+beta1: 0.9
+beta2: 0.999
+weight_decay: 0.05
+gradient_accumulation_steps: 1
+
+save_freq: 10
+print_freq: 20
+
+gpu: 0
+dist_url: null
+world_size: 1
+multiprocessing_distributed: false
+dist_backend: nccl
+distributed: false
+rank: 0
+ngpus_per_node: 1
+
+seed: 42
+debug: false

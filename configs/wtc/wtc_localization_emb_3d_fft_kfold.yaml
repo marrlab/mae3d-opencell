@@ -1,0 +1,101 @@
+# WTC-11 localization — 3D Cross-Attention FFT backbone, k-fold.
+#
+# Linear probe on pre-extracted MAE embeddings (fast mode).
+# Embeddings: [B, 768]  (embed_dim=384 * 2 channels, pool_mode=concat)
+#
+# Prerequisites:
+#   1. Train 3D FFT kfold:   sbatch --array=0-4 scripts/wtc/train_mae3d_cross_attention_fft_kfold_1gpu.sbatch
+#   2. Extract embeddings:   sbatch --array=0-4 scripts/wtc/extract_wtc_mae3d_fft_kfold_embeddings.sbatch
+#
+# trainer_name is not used by train_localization_wtc.py (imports directly),
+# but kept for documentation.
+
+# architecture
+arch: ViT3DCrossAttentionClassifier
+use_2d: false
+cross_attention_type: 'position_wise'
+pool_mode: 'concat'     # head input dim = 384 * 2 = 768
+
+# wandb
+proj_name: wtc_localization_3d_fft_kfold
+run_name: ${proj_name}_emb_linear_probe
+wandb_id: None
+
+# dataset
+dataset: wtc_localization
+csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/kfold5/fold0
+
+# output
+output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/localization_3d_fft_emb_kfold5/fold0
+ckpt_dir: ${output_dir}/ckpts
+
+# embedding path (overridden per fold via --mae_embedding_path)
+mae_embedding_path: None
+
+# augmentation — not used in embedding mode
+channel_wise_norm: true
+intensity_augmentation: false
+a_min: None
+a_max: None
+b_min: None
+b_max: None
+RandFlipd_prob: 0.0
+RandRotate90d_prob: 0.0
+RandScaleIntensityd_prob: 0.0
+scale_intensity_factor: 0.0
+RandShiftIntensityd_prob: 0.0
+shift_intensity_offset: 0.0
+
+# trainer
+trainer_name: LocalizationWTCTrainer
+batch_size: 256
+start_epoch: 0
+warmup_epochs: 5
+epochs: 100
+workers: 4
+resume: None
+cache_rate: 0.0
+eval_freq: 1
+
+# model architecture — used only to build the head skeleton
+input_size: [80, 224, 224]
+patch_size: [10, 8, 8]
+in_chans: 2
+num_classes: 15          # WTC has 15 localization categories
+encoder_embed_dim: 384
+encoder_depth: 6
+encoder_num_heads: 6
+pos_embed_type: 'sincos'
+use_global_pool: true
+drop_path: 0.0
+
+# No grade weights (single-label WTC)
+grade_weights: None
+
+# No pretrained weights — embeddings already extracted
+pretrain: None
+freeze_encoder: true
+
+# optimizer
+lr: 1e-3
+beta1: 0.9
+beta2: 0.999
+weight_decay: 0.05
+gradient_accumulation_steps: 1
+
+# logging
+save_freq: 10
+print_freq: 20
+
+# distributed
+gpu: 0
+dist_url: null
+world_size: 1
+multiprocessing_distributed: false
+dist_backend: nccl
+distributed: false
+rank: 0
+ngpus_per_node: 1
+
+seed: 42
+debug: false

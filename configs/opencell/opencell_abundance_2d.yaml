@@ -1,0 +1,106 @@
+# ============================================================================
+# Protein Abundance Prediction - 2D MAE
+# ============================================================================
+# Predicts protein concentration from 2D max-projected images using pretrained MAE2D
+
+# architecture
+arch: ViT2DClassifier
+use_2d: true
+
+# wandb
+proj_name: opencell_abundance
+run_name: abundance_2d_mae_mask${pretrain_mask_ratio}
+wandb_id: None
+pretrain_mask_ratio: 0.75  # Mask ratio used in MAE pretraining
+
+# dataset
+dataset: opencell_abundance
+csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/
+abundance_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-abundance/opencell-protein-abundance.csv
+
+# target configuration
+target_column: 'hek_protein_conc_nm'  # Options: 'hek_protein_conc_nm', 'hek_protein_copy_number', 'hek_rna_tpm'
+log_transform: true  # Apply log1p transform to targets
+normalize_target: true  # Normalize to zero mean, unit variance
+
+# output
+output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/abundance_results/${run_name}
+ckpt_dir: ${output_dir}/ckpts
+
+# ========================================
+# Data Preprocessing & Augmentation
+# ========================================
+channel_wise_norm: true
+intensity_augmentation: true
+
+a_min: None
+a_max: None
+b_min: None
+b_max: None
+
+# Spatial Augmentation
+RandFlipd_prob: 0.2
+RandRotate90d_prob: 0.2
+
+# Intensity Augmentation
+RandScaleIntensityd_prob: 0.1
+scale_intensity_factor: 0.1
+RandShiftIntensityd_prob: 0.1
+shift_intensity_offset: 0.1
+
+# trainer
+trainer_name: AbundanceTrainer
+batch_size: 16  # Can use larger batch for 2D
+start_epoch: 0
+warmup_epochs: 2
+epochs: 50
+workers: 8
+resume: None
+cache_rate: 0.0
+eval_freq: 1
+
+# model architecture (should match pretrained MAE2D)
+input_size:
+  - 176  # H
+  - 176  # W
+patch_size: [8, 8]
+in_chans: 2
+encoder_embed_dim: 384
+encoder_depth: 6
+encoder_num_heads: 6
+pos_embed_type: 'sincos'
+use_global_pool: true
+drop_path: 0.1
+
+# pretrained weights
+pretrain: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_2d/mae2d_vit_base_opencell_mask${pretrain_mask_ratio}/mae2d_vit_base_opencell_mask${pretrain_mask_ratio}/ckpts/checkpoint_0009.pth.tar
+
+# fine-tuning strategy
+freeze_encoder: true  # Linear probing (only train regression head)
+
+# optimizer
+lr: 1e-3
+beta1: 0.9
+beta2: 0.999
+weight_decay: 0.05
+gradient_accumulation_steps: 1
+
+# logging
+save_freq: 5
+print_freq: 50
+
+# distributed processing
+gpu: 0
+dist_url: null
+world_size: 1
+multiprocessing_distributed: false
+dist_backend: nccl
+distributed: false
+rank: 0
+ngpus_per_node: 1
+
+# randomness
+seed: 42
+
+# debugging
+debug: false

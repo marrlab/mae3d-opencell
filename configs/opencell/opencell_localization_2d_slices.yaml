@@ -1,0 +1,122 @@
+# ========================================
+# Protein Localization with Slice Aggregation
+# ========================================
+# Uses pretrained MAE2D slices encoder to process individual slices,
+# then aggregates embeddings (mean pooling) for volume-level classification.
+
+# architecture
+arch: ViT2DSliceAggregateClassifier
+
+# wandb
+proj_name: opencell_localization
+run_name: ${proj_name}_2d_slices_${aggregation}_mask${pretrain_mask_ratio}
+wandb_id: None
+pretrain_mask_ratio: 0.75  # Mask ratio used in pretraining
+
+# dataset
+dataset: opencell_localization
+csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/
+localization_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-localization-annotations/opencell-localization-annotations.csv
+
+# output
+output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/localization_results/${run_name}
+ckpt_dir: ${output_dir}/ckpts
+
+# ========================================
+# Slice Aggregation Settings
+# ========================================
+# Extract slices from slice_start to slice_end (inclusive)
+# Process each slice through MAE2D encoder
+# Aggregate embeddings via mean/max/attention pooling
+slice_start: 45
+slice_end: 55
+aggregation: mean  # Options: 'mean', 'max', 'attention'
+
+# ========================================
+# Data Preprocessing & Augmentation (2D)
+# ========================================
+# IMPORTANT: Use same normalization as MAE2D slices pretraining
+
+# Intensity Normalization (must match MAE2D training)
+channel_wise_norm: true  # CRITICAL: Must match MAE2D pretraining
+intensity_augmentation: true
+
+# Optional: Intensity clipping
+a_min: None
+a_max: None
+b_min: None
+b_max: None
+
+# Spatial Augmentation
+RandFlipd_prob: 0.2
+RandRotate90d_prob: 0.2
+
+# Intensity Augmentation
+RandScaleIntensityd_prob: 0.1
+scale_intensity_factor: 0.1
+RandShiftIntensityd_prob: 0.1
+shift_intensity_offset: 0.1
+
+# trainer
+trainer_name: LocalizationSliceTrainer
+batch_size: 4  # Smaller batch size since we process multiple slices per sample
+start_epoch: 0
+warmup_epochs: 2
+epochs: 50
+workers: 8
+resume: None
+cache_rate: 0.0
+eval_freq: 1
+
+# model architecture (2D, must match MAE2D slices pretraining)
+input_size:
+  - 176  # H
+  - 176  # W
+patch_size: [8, 8]  # 2D patches
+in_chans: 2
+num_classes: 17
+encoder_embed_dim: 384
+encoder_depth: 6
+encoder_num_heads: 6
+pos_embed_type: 'sincos'
+use_global_pool: true
+drop_path: 0.1
+
+# grade weights
+grade_weights:
+  3: 1.0
+  2: 0.5
+  1: 0.25
+
+# pretrained weights (MAE2D trained on slices)
+pretrain: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_2d/mae2d_vit_base_opencell_slices_mask${pretrain_mask_ratio}/mae2d_vit_base_opencell_slices_mask${pretrain_mask_ratio}/ckpts/checkpoint_0003.pth.tar
+
+# fine-tuning strategy
+freeze_encoder: true  # Linear probing first
+
+# optimizer
+lr: 1e-3  # Higher learning rate for linear probing
+beta1: 0.9
+beta2: 0.999
+weight_decay: 0.05
+gradient_accumulation_steps: 2  # Effective batch size = 4 * 2 = 8
+
+# logging
+save_freq: 5
+print_freq: 50
+
+# distributed processing
+gpu: 0
+dist_url: null
+world_size: 1
+multiprocessing_distributed: false
+dist_backend: nccl
+distributed: false
+rank: 0
+ngpus_per_node: 1
+
+# randomness
+seed: 42
+
+# debugging
+debug: false

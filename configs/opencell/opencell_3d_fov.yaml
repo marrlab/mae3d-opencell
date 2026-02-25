@@ -1,0 +1,161 @@
+# ========================================
+# OpenCell MAE 3D Configuration - FOV (Field-of-View)
+# ========================================
+# Training on FULL field-of-view images (no cropping)
+# FOV images: (51, 2, 600, 600) - Complete FOV with multiple cells
+
+# Architecture
+arch: vit_base
+enc_arch: MAEViTEncoder
+dec_arch: MAEViTDecoder
+
+# WandB Logging
+proj_name: mae3d_fov
+run_name: ${proj_name}_${arch}_${dataset}
+wandb_id: None
+
+# Dataset
+dataset: opencell_fov
+json_list: null
+data_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_raw/
+
+# Output
+output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_3d_fov/${run_name}
+ckpt_dir: ${output_dir}/ckpts
+
+# ========================================
+# Data Preprocessing & Augmentation (FOV)
+# ========================================
+
+# FOV Full Image Size (NO CROPPING)
+roi_x: 600  # Full FOV width
+roi_y: 600  # Full FOV height
+roi_z: 51   # FOV native Z dimension
+
+# Intensity Normalization (CRITICAL for multi-channel data)
+channel_wise_norm: true  # Normalize each channel independently
+intensity_augmentation: true  # Apply random intensity scaling/shifting
+
+# Optional: Intensity clipping (FOV is uint16, may need clipping)
+a_min: None  # Set if needed (e.g., percentile-based clipping)
+a_max: None
+b_min: None
+b_max: None
+
+# Spatial Augmentation
+RandFlipd_prob: 0.2
+RandRotate90d_prob: 0.2
+
+# Intensity Augmentation
+RandScaleIntensityd_prob: 0.1
+scale_intensity_factor: 0.1
+RandShiftIntensityd_prob: 0.1
+shift_intensity_offset: 0.1
+
+# ========================================
+# Trainer Configuration
+# ========================================
+
+trainer_name: MAE3DTrainer
+batch_size: 1  # REDUCED: FOV is 3.4x larger (600 vs 176), use smaller batch
+vis_batch_size: None
+start_epoch: 0
+warmup_epochs: 1
+epochs: 10
+workers: 8
+resume: None
+cache_rate: 0.0  # FOV images are ~3.5MB each, don't cache by default
+
+# ========================================
+# Model Architecture (FOV-Specific)
+# ========================================
+
+patchembed: 'PatchEmbed3D'
+pos_embed_type: 'sincos'
+mask_ratio: 0.75
+
+# Input size: Full FOV (no cropping)
+input_size:
+  - ${roi_z}   # 51 (FOV native Z)
+  - ${roi_y}   # 600 (full FOV height)
+  - ${roi_x}   # 600 (full FOV width)
+
+# Larger patches for larger images
+# Options:
+# 1. [10, 20, 20] → 75 patches (5×30×30 grid) - RECOMMENDED for memory
+# 2. [10, 15, 15] → 1600 patches (5×40×40 grid) - more patches, more compute
+# 3. [10, 12, 12] → 2500 patches (5×50×50 grid) - highest resolution
+patch_size: [10, 20, 20]  # S_Z, S_Y, S_X
+
+in_chans: 2  # OpenCell has 2 channels: nucleus and protein
+
+# Encoder (may need larger for FOV)
+encoder_embed_dim: 384  # Same as single cell (can increase to 768 for ViT-Base)
+encoder_depth: 6        # Same as single cell (can increase to 12)
+encoder_num_heads: 6    # Same as single cell (can increase to 12)
+
+# Decoder
+decoder_embed_dim: 192
+decoder_depth: 4
+decoder_num_heads: 6
+
+# ========================================
+# Optimizer
+# ========================================
+
+type: adamw
+lr: 1.5e-4  # Standard MAE learning rate
+beta1: 0.9
+beta2: 0.95
+weight_decay: 0.05
+grad_clip: 1.0
+gradient_accumulation_steps: 4  # RECOMMENDED: Use 4 for FOV (batch_size=1, effective_batch=4)
+
+# ========================================
+# Logging & Checkpointing
+# ========================================
+
+vis_freq: 500
+save_freq: 1
+print_freq: 100
+
+# ========================================
+# Distributed Training
+# ========================================
+
+gpu: 0
+dist_url: null
+world_size: 1
+multiprocessing_distributed: false
+dist_backend: nccl
+distributed: false
+rank: 0
+ngpus_per_node: 1
+
+# ========================================
+# Other Settings
+# ========================================
+
+seed: 42
+debug: false
+
+# ========================================
+# Notes: FOV vs Single Cell
+# ========================================
+# FOV Images:
+#   - Size: (51, 2, 600, 600) - 3.4x larger spatially
+#   - Format: uint16 (raw microscope data)
+#   - Content: Multiple cells per image
+#   - Memory: ~3.5MB per image
+#
+# Single Cell Images:
+#   - Size: (100, 2, 176, 176) - pre-cropped
+#   - Format: float16 (pre-normalized)
+#   - Content: One cell per image
+#   - Memory: ~0.3MB per image
+#
+# Training Differences:
+#   - Batch size: 1 (vs 2 for single cell) due to memory
+#   - Patch size: 20×20 (vs 8×8) for larger images
+#   - Number of patches: ~2250 (vs ~2200 for single cell)
+#   - No cropping: Uses full 600×600 FOV

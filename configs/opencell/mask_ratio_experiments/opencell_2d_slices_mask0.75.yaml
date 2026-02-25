@@ -1,0 +1,117 @@
+# architecture
+arch: vit_base
+enc_arch: MAEViTEncoder
+dec_arch: MAEViTDecoder
+
+# wandb
+proj_name: mae2d
+run_name: ${proj_name}_${arch}_${dataset}_slices_mask${mask_ratio}
+wandb_id: None
+
+# dataset
+dataset: opencell
+json_list: null  # Not used for OpenCell (uses CSV files instead)
+data_path:  /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/single_cell_dataset
+csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/
+
+# output
+output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_2d/${run_name}
+ckpt_dir: ${output_dir}/ckpts
+
+# ========================================
+# Data Preprocessing & Augmentation (2D)
+# ========================================
+
+# ROI size (input size for the model - 2D slices)
+roi_y: 176  # Height
+roi_x: 176  # Width
+
+# Intensity Normalization
+channel_wise_norm: true
+intensity_augmentation: true
+
+# Optional: Intensity clipping
+a_min: None
+a_max: None
+b_min: None
+b_max: None
+
+# Spatial Augmentation
+RandFlipd_prob: 0.2
+RandRotate90d_prob: 0.2
+
+# Intensity Augmentation
+RandScaleIntensityd_prob: 0.1
+scale_intensity_factor: 0.1
+RandShiftIntensityd_prob: 0.1
+shift_intensity_offset: 0.1
+
+# trainer
+trainer_name: MAE2DTrainer
+batch_size: 8  # Per GPU batch size
+vis_batch_size: None
+start_epoch: 0
+warmup_epochs: 1
+epochs: 5
+workers: 8
+resume: None
+cache_rate: 0.0  # Fraction of dataset to cache in RAM
+
+# model
+patchembed: 'PatchEmbed2D'
+pos_embed_type: 'sincos'
+mask_ratio: 0.75
+input_size:
+  - ${roi_y}
+  - ${roi_x}
+patch_size: [8, 8]  # H, W
+in_chans: 2  # 2 channels for OpenCell
+encoder_embed_dim: 384
+encoder_depth: 6
+encoder_num_heads: 6
+decoder_embed_dim: 192
+decoder_depth: 4
+decoder_num_heads: 6
+
+# optimizer
+type: adamw
+lr: 1.5e-4
+beta1: 0.9
+beta2: 0.95
+weight_decay: 0.05
+grad_clip: 1.0
+gradient_accumulation_steps: 1
+
+# logging
+vis_freq: 500
+save_freq: 1
+print_freq: 100
+
+# distributed processing
+gpu: 0
+dist_url: null
+world_size: 1
+multiprocessing_distributed: false
+dist_backend: nccl
+distributed: false
+rank: 0
+ngpus_per_node: 1
+
+# randomness
+seed: 42
+
+# debugging
+debug: false
+
+# ========================================
+# Slice-based Settings (instead of max projection)
+# ========================================
+# Use individual 2D slices from 3D volumes instead of max projection
+# This increases samples from 1 per volume to (slice_end - slice_start + 1) per volume
+use_slices: true
+slice_start: 45 # 20  # Start Z-index (inclusive)
+slice_end: 55   # 80  # End Z-index (inclusive)
+# With 100 slices per volume, this gives 61 samples per volume (slices 20-80)
+
+# Disable max projection when using slices
+use_max_projection: false

@@ -1,0 +1,151 @@
+# ========================================
+# OpenCell MAE 2D with Channel Cross-Attention and FFT Loss — K-Fold
+# ========================================
+# Trains on max-projected (2D) OpenCell images with:
+# - Position-wise cross-attention between nucleus and protein channels
+# - FFT loss (same run2 parameters as the 3D FFT kfold experiment)
+#
+# Submit as a SLURM array job:
+#   sbatch --array=0-4 scripts/train_mae2d_cross_attention_fft_kfold_1gpu.sbatch
+
+# Architecture
+arch: vit_base_cross_attn_fft_2d
+enc_arch: ChannelCrossAttentionEncoder
+dec_arch: ChannelCrossAttentionDecoder
+
+# WandB
+proj_name: mae2d_cross_attention_fft_kfold
+run_name: ${proj_name}_${arch}_${dataset}_mask${mask_ratio}_fft${fft_loss_weight}
+wandb_id: None
+
+# Dataset
+dataset: opencell
+json_list: null
+data_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/single_cell_dataset
+csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/
+
+# Output (overridden per-fold by the training script)
+output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_2d_cross_attention_fft_kfold/${run_name}
+ckpt_dir: ${output_dir}/ckpts
+
+# ========================================
+# Data
+# ========================================
+
+space_x: 1.0
+space_y: 1.0
+space_z: 1.0
+
+roi_x: 176
+roi_y: 176
+roi_z: 100  # only used to load 3D volumes before max-projection
+
+use_max_projection: true
+
+channel_wise_norm: true
+intensity_augmentation: true
+
+a_min: None
+a_max: None
+b_min: None
+b_max: None
+
+RandFlipd_prob: 0.2
+RandRotate90d_prob: 0.2
+
+RandScaleIntensityd_prob: 0.1
+scale_intensity_factor: 0.1
+RandShiftIntensityd_prob: 0.1
+shift_intensity_offset: 0.1
+
+# ========================================
+# Trainer
+# ========================================
+
+trainer_name: MAE2DChannelCrossAttentionFFTTrainer
+batch_size: 8
+vis_batch_size: None
+start_epoch: 0
+warmup_epochs: 4      # matches 3D FFT run2
+epochs: 10
+workers: 8
+resume: None
+cache_rate: 0.0
+
+# ========================================
+# Model Architecture (2D)
+# ========================================
+
+patchembed: 'PatchEmbed2D'
+pos_embed_type: 'sincos'
+mask_ratio: 0.75
+input_size:
+  - ${roi_y}
+  - ${roi_x}
+patch_size: [8, 8]
+in_chans: 2
+
+encoder_embed_dim: 384
+encoder_depth: 6
+encoder_num_heads: 6
+
+decoder_embed_dim: 192
+decoder_depth: 4
+decoder_num_heads: 6
+
+# ========================================
+# Cross-Attention
+# ========================================
+
+use_cross_attention: true
+cross_attention_type: position_wise
+
+# ========================================
+# FFT Loss  (run2 values, same as 3D kfold)
+# ========================================
+
+use_fft_loss: true
+fft_loss_weight: 0.1
+fft_warmup_epochs: 0
+fft_rampup_epochs: 2
+fft_use_log: true
+
+# ========================================
+# Optimizer
+# ========================================
+
+type: adamw
+lr: 1.5e-4
+beta1: 0.9
+beta2: 0.95
+weight_decay: 0.05
+grad_clip: 0.5
+gradient_accumulation_steps: 1
+
+# ========================================
+# Logging & Checkpointing
+# ========================================
+
+vis_freq: 500
+save_freq: 1
+print_freq: 100
+
+# ========================================
+# Distributed Training
+# ========================================
+
+gpu: 0
+dist_url: null
+world_size: 1
+multiprocessing_distributed: false
+dist_backend: nccl
+distributed: false
+rank: 0
+ngpus_per_node: 1
+
+# ========================================
+# Other
+# ========================================
+
+seed: 42
+debug: false

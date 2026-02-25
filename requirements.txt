@@ -1,0 +1,17 @@
+monai==1.3.*
+nibabel==3.2.1
+omegaconf==2.1.1
+timm==0.4.12
+wandb==0.23.1
+tifffile
+matplotlib
+monai[itk]
+pandas
+nvidia-ml-py
+scikit-learn
+tqdm
+
+# VLM dependencies
+transformers==4.44.2  # PyTorch 2.1.2 compatible
+accelerate>=0.27.0
+peft>=0.10.0

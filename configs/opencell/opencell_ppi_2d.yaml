@@ -1,0 +1,123 @@
+# ============================================================================
+# PPI (Protein-Protein Interaction) Prediction - 2D Metric Learning
+# ============================================================================
+# Trains a metric learning head for PPI prediction using pretrained MAE2D
+# Uses max-projected images
+# Architecture: ViT2D Encoder -> MLP Projection -> L2 Normalize -> Cosine Similarity
+
+# architecture
+arch: PPIMetric2D
+use_2d: true
+
+# wandb
+proj_name: opencell_ppi
+run_name: ppi_2d_metric_mask${pretrain_mask_ratio}
+wandb_id: None
+pretrain_mask_ratio: 0.75  # Mask ratio used in MAE pretraining
+
+# dataset
+dataset: opencell_ppi
+csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/
+ppi_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-protein-interactions/opencell-protein-interactions.csv
+abundance_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-abundance/opencell-protein-abundance.csv
+
+# PPI filtering thresholds
+pval_threshold: 5.0  # Minimum -log10(pval) threshold
+enrichment_threshold: 2.5  # Minimum enrichment threshold
+stoichiometry_threshold: 0.05  # Minimum interaction_stoichiometry threshold
+
+# Negative sampling
+n_abundance_buckets: 10  # Number of buckets for abundance-matched negative sampling
+n_negatives_per_positive: 1  # Ratio of negative to positive pairs
+
+# output
+output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/ppi_results/${run_name}
+ckpt_dir: ${output_dir}/ckpts
+
+# ========================================
+# Data Preprocessing & Augmentation
+# ========================================
+channel_wise_norm: true
+intensity_augmentation: true
+
+a_min: None
+a_max: None
+b_min: None
+b_max: None
+
+# Spatial Augmentation
+RandFlipd_prob: 0.2
+RandRotate90d_prob: 0.2
+
+# Intensity Augmentation
+RandScaleIntensityd_prob: 0.1
+scale_intensity_factor: 0.1
+RandShiftIntensityd_prob: 0.1
+shift_intensity_offset: 0.1
+
+# trainer
+trainer_name: PPITrainer
+batch_size: 16
+start_epoch: 0
+warmup_epochs: 2
+epochs: 50
+workers: 8
+resume: None
+cache_rate: 0.0
+eval_freq: 1
+
+# model architecture (2D - should match pretrained MAE2D)
+input_size:
+  - 176  # H
+  - 176  # W
+patch_size: [8, 8]
+in_chans: 2
+encoder_embed_dim: 384
+encoder_depth: 6
+encoder_num_heads: 6
+pos_embed_type: 'sincos'
+use_global_pool: true
+drop_path: 0.1
+
+# Projection head configuration
+proj_hidden_dim: 512  # Hidden layer dimension in MLP
+proj_output_dim: 128  # Final embedding dimension for similarity computation
+proj_num_layers: 2    # Number of MLP layers (2 or 3)
+
+# Loss function
+loss_type: 'contrastive'  # Options: 'contrastive', 'cosine', 'bce'
+margin: 0.5  # Margin for contrastive loss
+temperature: 0.1  # Temperature for BCEWithLogits loss
+
+# pretrained weights
+pretrain: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_2d/mae2d_vit_base_opencell_mask${pretrain_mask_ratio}/ckpts/checkpoint_0049.pth.tar
+
+# fine-tuning strategy
+freeze_encoder: true  # Linear probing: only train projection head
+
+# optimizer
+lr: 1e-4
+beta1: 0.9
+beta2: 0.999
+weight_decay: 0.05
+gradient_accumulation_steps: 1
+
+# logging
+save_freq: 5
+print_freq: 50
+
+# distributed processing
+gpu: 0
+dist_url: null
+world_size: 1
+multiprocessing_distributed: false
+dist_backend: nccl
+distributed: false
+rank: 0
+ngpus_per_node: 1
+
+# randomness
+seed: 42
+
+# debugging
+debug: false

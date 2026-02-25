@@ -1,0 +1,71 @@
+# architecture
+arch: SubCellMLPClassifier
+
+# wandb
+proj_name: opencell_localization
+run_name: ${proj_name}_subcell_embedding_linear
+wandb_id: None
+
+# dataset paths
+csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/
+localization_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-localization-annotations/opencell-localization-annotations.csv
+
+# subcell embedding paths
+embedding_dir: /lustre/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell_embeddings/subcell
+train_embedding_path: ${embedding_dir}/train.npy
+val_embedding_path: ${embedding_dir}/val.npy
+test_embedding_path: ${embedding_dir}/test.npy
+
+# output
+output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/localization_results/${run_name}
+ckpt_dir: ${output_dir}/ckpts
+
+# model architecture
+input_dim: 1536  # SubCell embedding dimension
+hidden_dim: 512  # Not used when num_layers=1 (kept for compatibility)
+num_classes: 17
+num_layers: 1  # Single linear layer (same as MAE2D localization head)
+dropout: 0.0  # Not used when num_layers=1
+
+# grade weights for localization annotations
+grade_weights:
+  3: 1.0
+  2: 0.5
+  1: 0.25
+
+# trainer
+trainer_name: SubCellLocalizationTrainer
+batch_size: 64  # Can use larger batch size since embeddings are precomputed
+start_epoch: 0
+warmup_epochs: 5
+epochs: 50
+workers: 4
+resume: None
+eval_freq: 1
+
+# optimizer
+lr: 1e-3
+beta1: 0.9
+beta2: 0.999
+weight_decay: 0.05
+gradient_accumulation_steps: 1
+
+# logging
+save_freq: 10
+print_freq: 50
+
+# distributed processing
+gpu: 0
+dist_url: null
+world_size: 1
+multiprocessing_distributed: false
+dist_backend: nccl
+distributed: false
+rank: 0
+ngpus_per_node: 1
+
+# randomness
+seed: 42
+
+# debugging
+debug: false

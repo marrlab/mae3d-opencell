@@ -1,0 +1,122 @@
+# ============================================================================
+# Embedding-based PPI — 3D Cross-Attention FFT backbone, k-fold.
+#
+# Trains only the MLP projection head on pre-extracted MAE embeddings (fast).
+# Run extract_mae3d_fft_kfold_embeddings.sbatch first.
+#
+# Embeddings are [B, 768] (embed_dim=384 * 2 channels, pool_mode=concat).
+# The encoder is never called; only projection_head is trained.
+# ============================================================================
+
+# architecture — cross-attention metric model (proj head input = 768)
+arch: PPIMetric3DCrossAttention
+use_2d: false
+
+cross_attention_type: 'position_wise'
+pool_mode: 'concat'  # proj_head input dim = embed_dim * 2 = 768
+
+# wandb
+proj_name: opencell_ppi_3d_fft_kfold
+run_name: ${proj_name}_emb_metric_probe
+wandb_id: None
+pretrain_mask_ratio: 0.75
+
+# dataset
+dataset: opencell_ppi
+csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/kfold5/fold0
+ppi_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-protein-interactions/opencell-protein-interactions.csv
+abundance_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-abundance/opencell-protein-abundance.csv
+
+# PPI filtering thresholds
+pval_threshold: 5.0
+enrichment_threshold: 2.5
+stoichiometry_threshold: 0.05
+
+# Negative sampling
+n_abundance_buckets: 10
+n_negatives_per_positive: 1
+
+# output (overridden per fold via --opts output_dir=...)
+output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/ppi_3d_fft_emb_kfold5/fold0
+ckpt_dir: ${output_dir}/ckpts
+
+# Embedding path — overridden per fold via --mae_embedding_path on the CLI
+mae_embedding_path: None
+
+# Augmentation — not used in embedding mode
+channel_wise_norm: true
+intensity_augmentation: false
+a_min: None
+a_max: None
+b_min: None
+b_max: None
+RandFlipd_prob: 0.0
+RandRotate90d_prob: 0.0
+RandScaleIntensityd_prob: 0.0
+scale_intensity_factor: 0.0
+RandShiftIntensityd_prob: 0.0
+shift_intensity_offset: 0.0
+
+# trainer
+trainer_name: PPITrainer
+batch_size: 256  # large batch — only numpy arrays loaded per step
+start_epoch: 0
+warmup_epochs: 5
+epochs: 100
+workers: 4
+resume: None
+cache_rate: 0.0
+eval_freq: 1
+
+# model architecture — used only to build the model skeleton;
+# the encoder is frozen and never called in embedding mode
+input_size:
+  - 100
+  - 176
+  - 176
+patch_size: [10, 8, 8]
+in_chans: 2
+encoder_embed_dim: 384
+encoder_depth: 6
+encoder_num_heads: 6
+pos_embed_type: 'sincos'
+use_global_pool: true
+drop_path: 0.0
+
+# Projection head
+proj_hidden_dim: 512
+proj_output_dim: 128
+proj_num_layers: 2
+
+# Loss function
+loss_type: 'contrastive'
+margin: 0.5
+temperature: 0.1
+
+# No pretrained weights needed — embeddings already extracted
+pretrain: None
+freeze_encoder: true
+
+# optimizer
+lr: 1e-4
+beta1: 0.9
+beta2: 0.999
+weight_decay: 0.05
+gradient_accumulation_steps: 1
+
+# logging
+save_freq: 10
+print_freq: 20
+
+# distributed
+gpu: 0
+dist_url: null
+world_size: 1
+multiprocessing_distributed: false
+dist_backend: nccl
+distributed: false
+rank: 0
+ngpus_per_node: 1
+
+seed: 42
+debug: false

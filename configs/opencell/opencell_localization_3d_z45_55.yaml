@@ -1,0 +1,121 @@
+# ========================================
+# OpenCell Localization 3D Configuration - Z-slice 45-55
+# ========================================
+# Uses pretrained MAE3D encoder trained on Z-slices 45-55
+# Must match the pretraining configuration for compatibility
+
+# architecture
+arch: ViT3DClassifier
+use_2d: false
+
+# wandb
+proj_name: opencell_localization
+run_name: ${proj_name}_3d_z10_90_mask${pretrain_mask_ratio}
+wandb_id: None
+pretrain_mask_ratio: 0.75  # Mask ratio used in pretraining (for tracking)
+
+# dataset
+dataset: opencell_localization
+csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/
+localization_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-localization-annotations/opencell-localization-annotations.csv
+
+# output
+output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/localization_results/${run_name}
+ckpt_dir: ${output_dir}/ckpts
+
+# ========================================
+# Z-Slice Selection (must match pretraining)
+# ========================================
+z_slice_start: 10  # 45
+z_slice_end: 90    # 55  # Exclusive, so slices 45-54 (10 slices)
+
+# ========================================
+# Data Preprocessing & Augmentation
+# ========================================
+# IMPORTANT: Use same normalization as MAE3D pretraining for compatibility
+
+# Intensity Normalization (must match MAE3D training)
+channel_wise_norm: true  # CRITICAL: Must match MAE3D pretraining
+intensity_augmentation: true  # Apply augmentation during fine-tuning
+
+# Optional: Intensity clipping (keep as None to match MAE3D)
+a_min: None
+a_max: None
+b_min: None
+b_max: None
+
+# Spatial Augmentation
+RandFlipd_prob: 0.2
+RandRotate90d_prob: 0.2
+
+# Intensity Augmentation
+RandScaleIntensityd_prob: 0.1
+scale_intensity_factor: 0.1
+RandShiftIntensityd_prob: 0.1
+shift_intensity_offset: 0.1
+
+# trainer
+trainer_name: LocalizationTrainer
+batch_size: 4
+start_epoch: 0
+warmup_epochs: 2
+epochs: 50
+workers: 8
+resume: None
+cache_rate: 0.0
+eval_freq: 1
+
+# model architecture (must match pretrained MAE3D z45-55)
+input_size:
+  - 80   # D (z-slices 45-54)
+  - 176  # H
+  - 176  # W
+patch_size: [8, 8, 8]  #  [5, 8, 8]  # Must match MAE3D z45-55: 10/5=2 patches in Z
+in_chans: 2
+num_classes: 17  # Number of localization labels
+encoder_embed_dim: 384  # Must match MAE3D
+encoder_depth: 6  # Must match MAE3D
+encoder_num_heads: 6  # Must match MAE3D
+pos_embed_type: 'sincos'  # Must match MAE3D
+use_global_pool: true
+drop_path: 0.1
+
+# grade weights for multi-label classification
+grade_weights:
+  3: 1.0   # Grade 3 (most prominent) - full weight
+  2: 0.5   # Grade 2 (intermediate) - half weight
+  1: 0.25  # Grade 1 (weak) - quarter weight
+
+# pretrained weights (update path to your trained z45-55 checkpoint)
+# pretrain: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_3d/mae3d_vit_base_opencell_z45_55_mask${pretrain_mask_ratio}/mae3d_vit_base_opencell_z45_55_mask${pretrain_mask_ratio}/ckpts/checkpoint_0009.pth.tar
+pretrain: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_3d/mae3d_vit_base_opencell_z10_90_mask0.75/mae3d_vit_base_opencell_z10_90_mask0.75/ckpts/checkpoint_0009.pth.tar
+
+# fine-tuning strategy
+freeze_encoder: true  # Linear probing (only train classification head)
+
+# optimizer
+lr: 1e-3  # Higher learning rate for linear probing
+beta1: 0.9
+beta2: 0.999
+weight_decay: 0.05
+gradient_accumulation_steps: 1
+
+# logging
+save_freq: 5
+print_freq: 50
+
+# distributed processing
+gpu: 0
+dist_url: null
+world_size: 1
+multiprocessing_distributed: false
+dist_backend: nccl
+distributed: false
+rank: 0
+ngpus_per_node: 1
+
+# randomness
+seed: 42
+
+# debugging
+debug: false

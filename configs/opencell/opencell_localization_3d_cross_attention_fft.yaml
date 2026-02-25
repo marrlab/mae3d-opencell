@@ -1,0 +1,112 @@
+# architecture
+arch: ViT3DCrossAttentionClassifier
+use_2d: false  # Set to true for 2D max-projection
+
+# Cross-attention specific settings
+cross_attention_type: 'position_wise'  # 'position_wise' (O(N)) or 'full' (O(N^2))
+pool_mode: 'concat'  # How to combine channel features: 'concat', 'mean', 'sum'
+
+# wandb
+proj_name: opencell_localization
+run_name: ${proj_name}_3d_cross_attention_fft_vit_base_pretrain_mask${pretrain_mask_ratio}
+wandb_id: None
+pretrain_mask_ratio: 0.75  # Mask ratio used in pretraining (for tracking)
+
+# dataset
+dataset: opencell_localization
+csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/
+localization_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-localization-annotations/opencell-localization-annotations.csv
+
+# output
+output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/localization_results/${run_name}
+ckpt_dir: ${output_dir}/ckpts
+
+# ========================================
+# Data Preprocessing & Augmentation
+# ========================================
+# IMPORTANT: Use same normalization as MAE3D pretraining for compatibility
+
+# Intensity Normalization (must match MAE3D training)
+channel_wise_norm: true  # CRITICAL: Must match MAE3D pretraining
+intensity_augmentation: true  # Apply augmentation during fine-tuning
+
+# Optional: Intensity clipping (keep as None to match MAE3D)
+a_min: None
+a_max: None
+b_min: None
+b_max: None
+
+# Spatial Augmentation
+RandFlipd_prob: 0.2
+RandRotate90d_prob: 0.2
+
+# Intensity Augmentation
+RandScaleIntensityd_prob: 0.1
+scale_intensity_factor: 0.1
+RandShiftIntensityd_prob: 0.1
+shift_intensity_offset: 0.1
+
+# trainer
+trainer_name: LocalizationTrainer
+batch_size: 8  # Per GPU batch size (can use larger batch for linear probing since encoder is frozen)
+start_epoch: 0
+warmup_epochs: 2
+epochs: 50  # More epochs for fine-tuning
+workers: 8
+resume: None
+cache_rate: 0.0  # Caching (0.0=no caching, 1.0=cache all)
+eval_freq: 1  # Evaluate every epoch
+
+# model architecture (should match pretrained MAE3D cross-attention)
+input_size:
+  - 100  # D
+  - 176  # H
+  - 176  # W
+patch_size: [10, 8, 8]  # Should match MAE3D
+in_chans: 2
+num_classes: 17  # Number of localization labels
+encoder_embed_dim: 384  # Should match MAE3D
+encoder_depth: 6  # Should match MAE3D
+encoder_num_heads: 6  # Should match MAE3D
+pos_embed_type: 'sincos'  # Should match MAE3D
+use_global_pool: true  # Use global average pooling instead of CLS token
+drop_path: 0.1  # Stochastic depth for regularization
+
+# grade weights for multi-label classification
+grade_weights:
+  3: 1.0   # Grade 3 (most prominent) - full weight
+  2: 0.5   # Grade 2 (intermediate) - half weight
+  1: 0.25  # Grade 1 (weak) - quarter weight
+
+# pretrained weights from MAE3D cross-attention with FFT 3D loss model
+pretrain: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_3d_cross_attention_fft/mae3d_cross_attention_fft_vit_base_cross_attn_fft_opencell_mask0.75_fft0.05/mae3d_cross_attention_fft_vit_base_cross_attn_fft_opencell_mask0.75_fft0.05/ckpts/checkpoint_0009.pth.tar
+
+# fine-tuning strategy
+freeze_encoder: true  # If true, only train classification head (linear probing). If false, train entire model.
+
+# optimizer
+lr: 1e-3  # Higher learning rate for linear probing (use 1e-4 for full fine-tuning)
+beta1: 0.9
+beta2: 0.999
+weight_decay: 0.05
+gradient_accumulation_steps: 1  # Number of steps to accumulate gradients (1=no accumulation)
+
+# logging
+save_freq: 5  # Save checkpoint every 5 epochs
+print_freq: 50  # Print every 50 iterations
+
+# distributed processing
+gpu: 0
+dist_url: null
+world_size: 1
+multiprocessing_distributed: false
+dist_backend: nccl
+distributed: false
+rank: 0
+ngpus_per_node: 1
+
+# randomness
+seed: 42
+
+# debugging
+debug: false
