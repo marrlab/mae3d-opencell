@@ -318,7 +318,6 @@ from data.opencell.dataset import OpenCellDataset
 ### Planned 🎯
 - [ ] Add HPA dataset (4 channels)
 - [ ] Add JUMP dataset (5+ channels)
-- [ ] CLIP model for image-text alignment
 - [ ] Cross-dataset transfer learning
 
 ---
