@@ -365,44 +365,6 @@ run_name: mae3d_vit_base_opencell
 
 ---
 
-## Troubleshooting
-
-### Import Errors
-
-**Error:** `ModuleNotFoundError: No module named 'data.opencell_dataset'`
-
-**Fix:** Update imports to new structure:
-```python
-# OLD
-from data.opencell_dataset import OpenCellDataset
-
-# NEW
-from data.opencell.dataset import OpenCellDataset
-```
-
-### Config Not Found
-
-**Error:** `FileNotFoundError: configs/opencell_3d.yaml`
-
-**Fix:** Configs now in `configs/opencell/`:
-```bash
-# OLD
---config configs/opencell_3d.yaml
-
-# NEW
---config configs/opencell/opencell_3d.yaml
-```
-
-### CUDA Out of Memory
-
-**Solutions:**
-- Reduce `batch_size` in config
-- Use gradient accumulation
-- Use 2D instead of 3D
-- Enable mixed precision training (already enabled)
-
----
-
 ## Citation
 
 **Base Code:**
@@ -416,16 +378,3 @@ GitHub: https://github.com/cvlab-stonybrook/SelfMedMAE
 OpenCell: Proteome-scale endogenous tagging enables the cartography of human cellular organization
 Website: https://opencell.czbiohub.org
 ```
-
----
-
-## Documentation
-
-- **Main Guide:** This README (you're reading it!)
-- **Test Installation:** `python test/test_normalization.py --config configs/opencell/opencell_3d.yaml`
-
-## Support
-
-**Need Help?**
-- Check troubleshooting section above
-- Test your setup with normalization test script
