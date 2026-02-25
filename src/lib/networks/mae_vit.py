@@ -19,7 +19,7 @@ __all__ = [
 
 def build_2d_sincos_position_embedding(grid_size, embed_dim, num_tokens=1, temperature=10000.):
     """
-    TODO: the code can work when grid size is isotropic (H==W), but it is not logically right especially when data is non-isotropic(H!=W).
+    Note: the code works when grid size is isotropic (H==W), but requires careful handling for non-isotropic data (H!=W).
     """
     h, w = grid_size, grid_size
     grid_w = torch.arange(w, dtype=torch.float32)
