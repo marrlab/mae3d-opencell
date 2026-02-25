@@ -2,7 +2,7 @@
 
 Foundation models for single-cell microscopy images using 2D/3D Masked Autoencoders (MAE).
 
-**Datasets:** OpenCell (current), WTC-11 (current), HPA, JUMP (future)
+**Datasets:** OpenCell, WTC-11
 **Base Code:** Adapted from [SelfMedMAE](https://github.com/cvlab-stonybrook/SelfMedMAE/tree/main)
 
 ---
@@ -46,7 +46,7 @@ src/
 │   │   ├── dataset.py              # Single-cell dataset
 │   │   ├── localization_dataset.py # Classification dataset
 │   │   └── transforms.py           # Channel-wise normalization
-│   └── base/               # Base classes for future datasets
+│   └── base/               # Base dataset classes
 │
 ├── lib/
 │   ├── models/             # MAE2D, MAE3D, ViT classifiers
@@ -230,7 +230,7 @@ python src/evaluate_localization_wtc.py \
 **Critical for multi-channel microscopy data:**
 - Each channel (nucleus, protein) normalized independently
 - Ensures model learns biological features, not brightness differences
-- Essential for datasets with 4-5 channels (HPA, JUMP)
+- Essential for multi-channel datasets
 
 **Configured in configs:**
 ```yaml
@@ -400,22 +400,6 @@ from data.opencell.dataset import OpenCellDataset
 - Use gradient accumulation
 - Use 2D instead of 3D
 - Enable mixed precision training (already enabled)
-
----
-
-## Next Steps
-
-### Completed
-- [x] MAE 3D pretraining on OpenCell
-- [x] MAE 2D pretraining on OpenCell
-- [x] Protein localization classification
-- [x] Channel-wise normalization
-- [x] Organized project structure
-
-### Planned
-- [ ] Add HPA dataset (4 channels)
-- [ ] Add JUMP dataset (5+ channels)
-- [ ] Cross-dataset transfer learning
 
 ---
 
