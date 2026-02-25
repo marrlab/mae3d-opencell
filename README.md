@@ -225,7 +225,7 @@ python src/evaluate_localization_wtc.py \
 
 ## Key Features
 
-### Channel-Wise Normalization ⭐
+### Channel-Wise Normalization
 
 **Critical for multi-channel microscopy data:**
 - Each channel (nucleus, protein) normalized independently
@@ -405,14 +405,14 @@ from data.opencell.dataset import OpenCellDataset
 
 ## Next Steps
 
-### Completed ✅
+### Completed
 - [x] MAE 3D pretraining on OpenCell
 - [x] MAE 2D pretraining on OpenCell
 - [x] Protein localization classification
 - [x] Channel-wise normalization
 - [x] Organized project structure
 
-### Planned 🎯
+### Planned
 - [ ] Add HPA dataset (4 channels)
 - [ ] Add JUMP dataset (5+ channels)
 - [ ] Cross-dataset transfer learning
