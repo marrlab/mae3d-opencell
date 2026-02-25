@@ -126,6 +126,103 @@ python src/evaluate_localization.py \
 
 ---
 
+## WTC-11 Dataset
+
+### Dataset Overview
+
+**Proteins:** 25 proteins (including AAVS1 control)
+**Channels:** 2 (nucleus, protein)
+**Localization categories:** 15 classes
+**Format:** K-fold cross-validation (typically 5-fold)
+
+**Localization categories:**
+cell_contact, centrosome, chromatin, cytoplasmic, cytoskeleton, er, focal_adhesions, golgi, mitochondria, nuclear_membrane, nuclear_punctae, nucleolus_fc_dfc, nucleolus_gc, peroxisome, vesicles
+
+### Training Pipeline
+
+#### Step 1: Extract ESM2 Embeddings
+
+```bash
+# Extract ESM2 embeddings for 25 WTC proteins
+sbatch scripts/wtc/extract_wtc_esm2_embeddings.sbatch
+```
+
+**Output:**
+```
+wtc11/esm2_embeddings/
+├── embeddings.npy        # (25, 1280) - one vector per protein
+├── protein_names.txt     # 25 gene symbols
+└── wtc_sequences.json    # UniProt cache
+```
+
+**Note:** AAVS1 is a control locus with no protein sequence → zero embedding
+
+#### Step 2: Create Fold-Specific ESM2 Embeddings
+
+```bash
+python src/wtc/create_wtc_kfold_esm2_embeddings.py \
+    --protein_emb_file   /path/to/wtc11/esm2_embeddings/embeddings.npy \
+    --protein_names_file /path/to/wtc11/esm2_embeddings/protein_names.txt \
+    --kfold_dir          /path/to/wtc11/kfold5 \
+    --output_dir         /path/to/wtc11/esm2_embeddings_kfold5
+```
+
+#### Step 3: Train MAE with Protein Conditioning
+
+**FFT models (frequency-domain conditioning):**
+```bash
+sbatch --array=0-4 scripts/wtc/train_mae3d_cross_attention_fft_kfold_1gpu.sbatch
+sbatch --array=0-4 scripts/wtc/train_mae2d_cross_attention_fft_kfold_1gpu.sbatch
+```
+
+**CLIP models (contrastive learning on top of FFT):**
+```bash
+sbatch --array=0-4 scripts/wtc/train_mae3d_cross_attention_clip_kfold_1gpu.sbatch
+sbatch --array=0-4 scripts/wtc/train_mae2d_cross_attention_clip_kfold_1gpu.sbatch
+```
+
+### Localization Task (Downstream)
+
+#### Extract MAE Embeddings
+
+```bash
+# For 3D FFT model (example)
+sbatch --array=0-4 scripts/wtc/extract_wtc_mae3d_fft_kfold_embeddings.sbatch
+
+# For other variants: 2d_fft, 3d_clip, 2d_clip
+```
+
+#### Train Linear Probe
+
+```bash
+# For 3D FFT model (example)
+sbatch --array=0-4 scripts/wtc/train_localization_emb_3d_fft_kfold.sbatch
+
+# Or manually:
+python src/train_localization_wtc.py \
+    --config configs/wtc/wtc_localization_emb_3d_fft_kfold.yaml
+```
+
+#### Evaluate
+
+```bash
+# For 3D FFT model (example)
+sbatch --array=0-4 scripts/wtc/evaluate_localization_emb_3d_fft_kfold.sbatch
+
+# Or manually:
+python src/evaluate_localization_wtc.py \
+    --config configs/wtc/wtc_localization_emb_3d_fft_kfold.yaml \
+    --checkpoint /path/to/checkpoint.pth.tar
+```
+
+**Available model variants:**
+- `3d_fft`: 3D MAE with FFT conditioning
+- `2d_fft`: 2D MAE with FFT conditioning
+- `3d_clip`: 3D MAE with CLIP contrastive learning
+- `2d_clip`: 2D MAE with CLIP contrastive learning
+
+---
+
 ## Key Features
 
 ### Channel-Wise Normalization ⭐
@@ -348,87 +445,3 @@ Website: https://opencell.czbiohub.org
 **Need Help?**
 - Check troubleshooting section above
 - Test your setup with normalization test script
-
-
-
-
----                                                                                                                  
-  Step 2 — Extract ESM2 embeddings for the 25 WTC proteins
-                                                                                                                       
-  sbatch scripts/wtc/extract_wtc_esm2_embeddings.sbatch
-  This produces:
-  wtc11/esm2_embeddings/
-      embeddings.npy        (25, 1280)  — one vector per protein
-      protein_names.txt                 — 25 gene symbols, row-aligned
-      wtc_sequences.json                — UniProt cache (reusable)
-  Note: AAVS1 is a control locus with no protein sequence → its embedding will be a zero vector.
-
-  ---
-  Step 3 — Create fold-specific ESM2 embedding files
-
-  python src/wtc/create_wtc_kfold_esm2_embeddings.py \
-      --protein_emb_file   /path/to/.../wtc11/esm2_embeddings/embeddings.npy \
-      --protein_names_file /path/to/.../wtc11/esm2_embeddings/protein_names.txt \
-      --kfold_dir          /path/to/.../wtc11/kfold5 \
-      --output_dir         /path/to/.../wtc11/esm2_embeddings_kfold5
-
-  ---
-  Step 4 — Train FFT models (Steps 2–4 can overlap; FFT doesn't need ESM2)
-
-  sbatch --array=0-4 scripts/wtc/train_mae3d_cross_attention_fft_kfold_1gpu.sbatch
-  sbatch --array=0-4 scripts/wtc/train_mae2d_cross_attention_fft_kfold_1gpu.sbatch
-
-  ---
-  Step 5 — Fine-tune with CLIP (after FFT + ESM2 both done)
-
-  sbatch --array=0-4 scripts/wtc/train_mae3d_cross_attention_clip_kfold_1gpu.sbatch
-  sbatch --array=0-4 scripts/wtc/train_mae2d_cross_attention_clip_kfold_1gpu.sbatch
-
-
- WTC-11 Localization Downstream Task
-                                                                                                                       
-  New files                                                                                                            
-
-  File: src/data/wtc/localization_dataset.py
-  Purpose: WTCLocalizationDataset — 15 localization categories mapped from 25 proteins, one-hot labels, embedding mode
-  ────────────────────────────────────────
-  File: src/lib/trainers/localization_wtc_trainer.py
-  Purpose: LocalizationWTCTrainer — subclass of LocalizationTrainer, overrides build_dataloader()
-  ────────────────────────────────────────
-  File: src/extract_mae_embeddings_wtc.py
-  Purpose: Extract per-fold MAE embeddings using WTCDataset
-  ────────────────────────────────────────
-  File: src/train_localization_wtc.py
-  Purpose: Training script
-  ────────────────────────────────────────
-  File: src/evaluate_localization_wtc.py
-  Purpose: Evaluation script (accuracy, macro-F1, mAP, per-class)
-  ────────────────────────────────────────
-  File: configs/wtc/wtc_localization_emb_{2,3}d_{fft,clip}_kfold.yaml
-  Purpose: 4 configs, num_classes=15
-  ────────────────────────────────────────
-  File: scripts/wtc/extract_wtc_mae{2,3}d_{fft,clip}_kfold_embeddings.sbatch
-  Purpose: 4 extract scripts
-  ────────────────────────────────────────
-  File: scripts/wtc/train_localization_emb_{2,3}d_{fft,clip}_kfold.sbatch
-  Purpose: 4 train scripts
-  ────────────────────────────────────────
-  File: scripts/wtc/evaluate_localization_emb_{2,3}d_{fft,clip}_kfold.sbatch
-  Purpose: 4 eval scripts
-
-  WTC localization categories (15)
-
-  cell_contact, centrosome, chromatin, cytoplasmic, cytoskeleton, er, focal_adhesions, golgi, mitochondria,
-  nuclear_membrane, nuclear_punctae, nucleolus_fc_dfc, nucleolus_gc, peroxisome, vesicles
-
-  Full run order (per model variant, e.g. 3D FFT)
-
-  # 1. Extract embeddings (after MAE training)
-  sbatch --array=0-4 scripts/wtc/extract_wtc_mae3d_fft_kfold_embeddings.sbatch
-
-  # 2. Train linear probe
-  sbatch --array=0-4 scripts/wtc/train_localization_emb_3d_fft_kfold.sbatch
-
-  # 3. Evaluate
-  sbatch --array=0-4 scripts/wtc/evaluate_localization_emb_3d_fft_kfold.sbatch
-  Replace 3d_fft with 2d_fft, 3d_clip, 2d_clip for the other three variants.
