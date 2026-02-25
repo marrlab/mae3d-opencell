@@ -15,17 +15,17 @@ run_name: ${proj_name}_fold0
 wandb_id: None
 
 # dataset paths — overridden per fold via --opts
-csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/kfold5/fold0
-localization_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-localization-annotations/opencell-localization-annotations.csv
+csv_path: /path/to/datasets/opencell/opencell_dataset/single_cells/metadata/kfold5/fold0
+localization_csv_path: /path/to/datasets/opencell/opencell_metadata_raw/protein-localization-annotations/opencell-localization-annotations.csv
 
 # subcell embedding paths — overridden per fold via --opts
-embedding_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/subcell_pca384_kfold5/fold0
+embedding_dir: /path/to/datasets/opencell/subcell_pca384_kfold5/fold0
 train_embedding_path: ${embedding_dir}/train.npy
 val_embedding_path: ${embedding_dir}/val.npy
 test_embedding_path: ${embedding_dir}/test.npy
 
 # output — overridden per fold via --opts
-output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/localization_subcell_pca384_kfold5/fold0
+output_dir: /path/to/datasets/opencell/localization_subcell_pca384_kfold5/fold0
 ckpt_dir: ${output_dir}/ckpts
 
 # model architecture

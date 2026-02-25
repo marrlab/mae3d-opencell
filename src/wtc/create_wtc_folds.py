@@ -44,11 +44,11 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Create WTC-11 5-fold splits")
     parser.add_argument(
         "--info_path",
-        default="/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/wtc11_cells_info.csv",
+        default="/path/to/datasets/wtc11/wtc11_cells_info.csv",
     )
     parser.add_argument(
         "--output_path",
-        default="/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/wtc11_cells_info_5fold.csv",
+        default="/path/to/datasets/wtc11/wtc11_cells_info_5fold.csv",
     )
     parser.add_argument("--n_folds", type=int, default=5)
     parser.add_argument("--seed",    type=int, default=42)

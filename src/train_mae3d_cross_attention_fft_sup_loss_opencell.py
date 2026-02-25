@@ -59,7 +59,7 @@ def main():
     rank, world_size, local_rank, is_distributed = setup_distributed()
 
     # Load config
-    code_base_path = '/lustre/groups/aih/amirhossein.kardoost/codes/single-cell-foundation-model/single-cell-foundation-model/'
+    code_base_path = '/path/to/repository/'
     config_path = os.path.join(code_base_path, 'configs/opencell/opencell_3d_cross_attention_fft_sup_loss.yaml')
 
     if rank == 0:

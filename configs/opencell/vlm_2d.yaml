@@ -42,8 +42,8 @@ lora_dropout: 0.05
 # ============================================================================
 # Data (same JSONL files as 3D)
 # ============================================================================
-train_jsonl: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/vlm_dataset/train_expanded.jsonl
-val_jsonl: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/vlm_dataset/val_expanded.jsonl
+train_jsonl: /path/to/datasets/opencell/opencell_dataset/single_cells/metadata/dataset1/vlm_dataset/train_expanded.jsonl
+val_jsonl: /path/to/datasets/opencell/opencell_dataset/single_cells/metadata/dataset1/vlm_dataset/val_expanded.jsonl
 
 expanded_format: true
 max_length: 512
@@ -61,7 +61,7 @@ grad_clip: 1.0
 # ============================================================================
 # Logging & Checkpointing
 # ============================================================================
-output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/vlm_2d_outputs
+output_dir: /path/to/datasets/opencell/vlm_2d_outputs
 wandb_project: cell-vlm-2d
 
 log_interval: 50

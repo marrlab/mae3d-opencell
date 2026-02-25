@@ -21,10 +21,10 @@ wandb_id: None
 
 # dataset
 dataset: wtc_localization
-csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/kfold5/fold0
+csv_path: /path/to/datasets/wtc11/kfold5/fold0
 
 # output
-output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/localization_3d_opencell_pretrain_emb_kfold5/fold0
+output_dir: /path/to/datasets/wtc11/localization_3d_opencell_pretrain_emb_kfold5/fold0
 ckpt_dir: ${output_dir}/ckpts
 
 # embedding path (overridden per fold via --mae_embedding_path)

@@ -605,16 +605,12 @@ Website: https://opencell.czbiohub.org
 ## Documentation
 
 - **Main Guide:** This README (you're reading it!)
-- **Technical Reference:** [`docs/CLAUDE.md`](docs/CLAUDE.md) - Detailed implementation guide
 - **Test Installation:** `python test/test_normalization.py --config configs/opencell/opencell_3d.yaml`
 
 ## Support
 
-**Project Maintainer:** Amirhossein Kardoost
-
 **Need Help?**
 - Check troubleshooting section above
-- Review [`docs/CLAUDE.md`](docs/CLAUDE.md) for technical details
 - Test your setup with normalization test script
 
 

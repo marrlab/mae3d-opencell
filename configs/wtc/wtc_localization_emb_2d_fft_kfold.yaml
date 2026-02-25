@@ -11,9 +11,9 @@ run_name: ${proj_name}_emb_linear_probe
 wandb_id: None
 
 dataset: wtc_localization
-csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/kfold5/fold0
+csv_path: /path/to/datasets/wtc11/kfold5/fold0
 
-output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/localization_2d_fft_emb_kfold5/fold0
+output_dir: /path/to/datasets/wtc11/localization_2d_fft_emb_kfold5/fold0
 ckpt_dir: ${output_dir}/ckpts
 
 mae_embedding_path: None

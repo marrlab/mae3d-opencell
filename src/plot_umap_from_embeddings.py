@@ -423,7 +423,7 @@ def main():
     parser.add_argument('--csv_path', type=str, default=None,
                         help='Path to metadata CSV (required for .npy files without labels)')
     parser.add_argument('--localization_csv', type=str,
-                        default='/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-localization-annotations/opencell-localization-annotations.csv',
+                        default='/path/to/datasets/opencell/opencell_metadata_raw/protein-localization-annotations/opencell-localization-annotations.csv',
                         help='Path to localization annotations CSV')
     parser.add_argument('--n_neighbors', type=int, default=15,
                         help='UMAP n_neighbors parameter')

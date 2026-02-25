@@ -182,7 +182,7 @@ def main():
         print('Single GPU training')
 
     # Load config
-    code_base_path = '/lustre/groups/aih/amirhossein.kardoost/codes/single-cell-foundation-model/single-cell-foundation-model/'
+    code_base_path = '/path/to/repository/'
     if rank == 0:
         print(f'code base path: {code_base_path}')
     args = get_conf(os.path.join(code_base_path,

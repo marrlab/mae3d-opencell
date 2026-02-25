@@ -34,9 +34,9 @@ For images smaller than the target: centre-pad with zeros.
 Usage
 -----
     python src/wtc/create_wtc_info_csv.py \
-        --metadata_path /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/metadata_50k_subset.csv \
-        --data_root     /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11 \
-        --output_path   /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/wtc11_cells_info.csv
+        --metadata_path /path/to/datasets/wtc11/metadata_50k_subset.csv \
+        --data_root     /path/to/datasets/wtc11 \
+        --output_path   /path/to/datasets/wtc11/wtc11_cells_info.csv
 """
 
 import argparse
@@ -56,16 +56,16 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Create WTC-11 cell info CSV")
     parser.add_argument(
         "--metadata_path",
-        default="/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/metadata_50k_subset.csv",
+        default="/path/to/datasets/wtc11/metadata_50k_subset.csv",
     )
     parser.add_argument(
         "--data_root",
-        default="/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11",
+        default="/path/to/datasets/wtc11",
         help="Root directory where crop_raw/ folder lives",
     )
     parser.add_argument(
         "--output_path",
-        default="/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/wtc11_cells_info.csv",
+        default="/path/to/datasets/wtc11/wtc11_cells_info.csv",
     )
     return parser.parse_args()
 

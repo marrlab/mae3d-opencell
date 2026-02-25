@@ -29,11 +29,11 @@ wandb_id: None
 # Dataset
 dataset: wtc
 json_list: null
-data_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11
-csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/kfold5/fold0
+data_path: /path/to/datasets/wtc11
+csv_path: /path/to/datasets/wtc11/kfold5/fold0
 
 # Output (overridden per-fold by the training script)
-output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/mae_wtc_2d_cross_attention_fft_kfold5/${run_name}
+output_dir: /path/to/datasets/wtc11/mae_wtc_2d_cross_attention_fft_kfold5/${run_name}
 ckpt_dir: ${output_dir}/ckpts
 
 # ========================================

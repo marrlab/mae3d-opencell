@@ -17,10 +17,10 @@ wandb_id: None
 # Dataset
 dataset: opencell_fov
 json_list: null
-data_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_raw/
+data_path: /path/to/datasets/opencell/opencell_raw/
 
 # Output
-output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_2d_fov/${run_name}
+output_dir: /path/to/datasets/opencell/mae_opencell_2d_fov/${run_name}
 ckpt_dir: ${output_dir}/ckpts
 
 # ========================================

@@ -23,19 +23,19 @@ from pathlib import Path
 # ============================================================================
 # Paths – edit here if needed
 # ============================================================================
-GLOBAL_CSV_DIR   = "/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1"
-KFOLD_CSV_BASE   = "/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/kfold5"
+GLOBAL_CSV_DIR   = "/path/to/datasets/opencell/opencell_dataset/single_cells/metadata/dataset1"
+KFOLD_CSV_BASE   = "/path/to/datasets/opencell/opencell_dataset/single_cells/metadata/kfold5"
 N_FOLDS          = 5
 SPLITS           = ["train", "val", "test"]
 
 SOURCES = {
     "subcell_pca384": {
-        "emb_dir":  "/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/subcell_pca384",
-        "out_dir":  "/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/subcell_pca384_kfold5",
+        "emb_dir":  "/path/to/datasets/opencell/subcell_pca384",
+        "out_dir":  "/path/to/datasets/opencell/subcell_pca384_kfold5",
     },
     "dino4cell_pca384": {
-        "emb_dir":  "/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/dino4cell_pca384",
-        "out_dir":  "/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/dino4cell_pca384_kfold5",
+        "emb_dir":  "/path/to/datasets/opencell/dino4cell_pca384",
+        "out_dir":  "/path/to/datasets/opencell/dino4cell_pca384_kfold5",
     },
 }
 # ============================================================================

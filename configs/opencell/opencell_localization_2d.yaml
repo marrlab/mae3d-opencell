@@ -10,11 +10,11 @@ pretrain_mask_ratio: 0.9  # Mask ratio used in pretraining (for tracking)
 
 # dataset
 dataset: opencell_localization
-csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/
-localization_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-localization-annotations/opencell-localization-annotations.csv
+csv_path: /path/to/datasets/opencell/opencell_dataset/single_cells/metadata/dataset1/
+localization_csv_path: /path/to/datasets/opencell/opencell_metadata_raw/protein-localization-annotations/opencell-localization-annotations.csv
 
 # output
-output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/localization_results/${run_name}
+output_dir: /path/to/datasets/opencell/localization_results/${run_name}
 ckpt_dir: ${output_dir}/ckpts
 
 # ========================================
@@ -74,8 +74,8 @@ grade_weights:
   1: 0.25
 
 # pretrained weights (update this path when you have a 2D pretrained model)
-# pretrain: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_2d/mae2d_vit_base_opencell/mae2d_vit_base_opencell/ckpts/checkpoint_0009.pth.tar  # Set to MAE2D checkpoint path when available
-pretrain: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_2d/mae2d_vit_base_opencell_mask${pretrain_mask_ratio}/mae2d_vit_base_opencell_mask${pretrain_mask_ratio}/ckpts/checkpoint_0009.pth.tar  # Set to MAE2D checkpoint path when available
+# pretrain: /path/to/datasets/opencell/mae_opencell_2d/mae2d_vit_base_opencell/mae2d_vit_base_opencell/ckpts/checkpoint_0009.pth.tar  # Set to MAE2D checkpoint path when available
+pretrain: /path/to/datasets/opencell/mae_opencell_2d/mae2d_vit_base_opencell_mask${pretrain_mask_ratio}/mae2d_vit_base_opencell_mask${pretrain_mask_ratio}/ckpts/checkpoint_0009.pth.tar  # Set to MAE2D checkpoint path when available
 
 # fine-tuning strategy
 freeze_encoder: true  # If true, only train classification head (linear probing). If false, train entire model.

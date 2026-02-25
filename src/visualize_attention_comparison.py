@@ -643,7 +643,7 @@ def main():
     device = torch.device('cpu' if cmd.cpu or not torch.cuda.is_available() else 'cuda')
     print(f'Device: {device}')
 
-    code_base = '/lustre/groups/aih/amirhossein.kardoost/codes/single-cell-foundation-model/single-cell-foundation-model/'
+    code_base = '/path/to/repository/'
 
     def absp(p):
         return p if os.path.isabs(p) else os.path.join(code_base, p)

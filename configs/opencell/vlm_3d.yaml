@@ -12,7 +12,7 @@
 # MAE Vision Encoder (pretrained)
 # ============================================================================
 mae_config: configs/opencell/opencell_3d.yaml
-mae_checkpoint: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_3d_cross_attention/mae3d_cross_attention_vit_base_cross_attn_opencell_mask0.75/mae3d_cross_attention_vit_base_cross_attn_opencell_mask0.75/ckpts/checkpoint_0009.pth.tar  # UPDATE THIS
+mae_checkpoint: /path/to/datasets/opencell/mae_opencell_3d_cross_attention/mae3d_cross_attention_vit_base_cross_attn_opencell_mask0.75/mae3d_cross_attention_vit_base_cross_attn_opencell_mask0.75/ckpts/checkpoint_0009.pth.tar  # UPDATE THIS
 
 # ============================================================================
 # Language Model
@@ -40,8 +40,8 @@ lora_dropout: 0.05
 # Data
 # ============================================================================
 # UPDATE THESE PATHS after running create_vlm_dataset.py
-train_jsonl: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/vlm_dataset/train_expanded.jsonl
-val_jsonl: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/vlm_dataset/val_expanded.jsonl
+train_jsonl: /path/to/datasets/opencell/opencell_dataset/single_cells/metadata/dataset1/vlm_dataset/train_expanded.jsonl
+val_jsonl: /path/to/datasets/opencell/opencell_dataset/single_cells/metadata/dataset1/vlm_dataset/val_expanded.jsonl
 
 expanded_format: true       # Use expanded JSONL (one QA per line)
 use_3d: true               # Use full 3D volumes
@@ -70,7 +70,7 @@ grad_clip: 1.0
 # ============================================================================
 # Logging & Checkpointing
 # ============================================================================
-output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/vlm_outputs
+output_dir: /path/to/datasets/opencell/vlm_outputs
 wandb_project: cell-vlm
 
 log_interval: 50           # Log every N batches

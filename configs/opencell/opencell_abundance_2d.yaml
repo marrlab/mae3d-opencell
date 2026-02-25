@@ -15,8 +15,8 @@ pretrain_mask_ratio: 0.75  # Mask ratio used in MAE pretraining
 
 # dataset
 dataset: opencell_abundance
-csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/
-abundance_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-abundance/opencell-protein-abundance.csv
+csv_path: /path/to/datasets/opencell/opencell_dataset/single_cells/metadata/dataset1/
+abundance_csv_path: /path/to/datasets/opencell/opencell_metadata_raw/protein-abundance/opencell-protein-abundance.csv
 
 # target configuration
 target_column: 'hek_protein_conc_nm'  # Options: 'hek_protein_conc_nm', 'hek_protein_copy_number', 'hek_rna_tpm'
@@ -24,7 +24,7 @@ log_transform: true  # Apply log1p transform to targets
 normalize_target: true  # Normalize to zero mean, unit variance
 
 # output
-output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/abundance_results/${run_name}
+output_dir: /path/to/datasets/opencell/abundance_results/${run_name}
 ckpt_dir: ${output_dir}/ckpts
 
 # ========================================
@@ -73,7 +73,7 @@ use_global_pool: true
 drop_path: 0.1
 
 # pretrained weights
-pretrain: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_2d/mae2d_vit_base_opencell_mask${pretrain_mask_ratio}/mae2d_vit_base_opencell_mask${pretrain_mask_ratio}/ckpts/checkpoint_0009.pth.tar
+pretrain: /path/to/datasets/opencell/mae_opencell_2d/mae2d_vit_base_opencell_mask${pretrain_mask_ratio}/mae2d_vit_base_opencell_mask${pretrain_mask_ratio}/ckpts/checkpoint_0009.pth.tar
 
 # fine-tuning strategy
 freeze_encoder: true  # Linear probing (only train regression head)

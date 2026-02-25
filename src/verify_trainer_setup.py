@@ -38,7 +38,7 @@ def test_config_loading():
     print("\nTesting configuration loading...")
     try:
         from utils.utils import get_conf
-        code_base_path = '/lustre/groups/aih/amirhossein.kardoost/codes/single-cell-foundation-model/single-cell-foundation-model/'
+        code_base_path = '/path/to/repository/'
         config_path = os.path.join(code_base_path, 'configs/opencell_3d.yaml')
 
         if not os.path.exists(config_path):

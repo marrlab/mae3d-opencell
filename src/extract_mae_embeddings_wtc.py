@@ -72,7 +72,7 @@ def main():
     cmd = parser.parse_args()
 
     # ── Config ───────────────────────────────────────────────────────────────
-    code_base = '/lustre/groups/aih/amirhossein.kardoost/codes/single-cell-foundation-model/single-cell-foundation-model/'
+    code_base = '/path/to/repository/'
     config_path = cmd.config if os.path.isabs(cmd.config) else os.path.join(code_base, cmd.config)
     args = get_conf(config_path)
 

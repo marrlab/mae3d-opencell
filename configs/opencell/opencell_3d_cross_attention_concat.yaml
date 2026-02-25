@@ -17,26 +17,26 @@ wandb_id: None
 # Dataset
 dataset: opencell
 json_list: null
-data_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/single_cell_dataset
-csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/
+data_path: /path/to/datasets/opencell/opencell_dataset/single_cells/single_cell_dataset
+csv_path: /path/to/datasets/opencell/opencell_dataset/single_cells/metadata/dataset1/
 
 # External embeddings for decoder concatenation
 # ESM2 protein embeddings
-esm2_embedding_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/esm2_embeddings/
+esm2_embedding_path: /path/to/datasets/opencell/esm2_embeddings/
 
 # SubCell embeddings (for concat, separate from distillation embedding_path)
-concat_embedding_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell_embeddings/subcell
-# concat_embedding_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell_embeddings/dino4cells_wtc/
+concat_embedding_path: /path/to/datasets/opencell_embeddings/subcell
+# concat_embedding_path: /path/to/datasets/opencell_embeddings/dino4cells_wtc/
 
 # Output
-output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_3d_cross_attention_concat/${run_name}
+output_dir: /path/to/datasets/opencell/mae_opencell_3d_cross_attention_concat/${run_name}
 ckpt_dir: ${output_dir}/ckpts
 
 # ========================================
 # Pre-trained Checkpoint
 # ========================================
 # Path to pre-trained MAE3D cross-attention + FFT checkpoint
-resume: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_3d_cross_attention_fft/mae3d_cross_attention_fft_vit_base_cross_attn_fft_opencell_mask0.75_fft0.1_run2/mae3d_cross_attention_fft_vit_base_cross_attn_fft_opencell_mask0.75_fft0.1_run2/ckpts/checkpoint_0009.pth.tar
+resume: /path/to/datasets/opencell/mae_opencell_3d_cross_attention_fft/mae3d_cross_attention_fft_vit_base_cross_attn_fft_opencell_mask0.75_fft0.1_run2/mae3d_cross_attention_fft_vit_base_cross_attn_fft_opencell_mask0.75_fft0.1_run2/ckpts/checkpoint_0009.pth.tar
 
 # ========================================
 # Data Preprocessing & Augmentation

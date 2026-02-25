@@ -415,13 +415,13 @@ def extract_embeddings_for_split(
 def main():
     parser = argparse.ArgumentParser(description='Extract ESM2 embeddings for OpenCell')
     parser.add_argument('--csv_dir', type=str,
-                        default='/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/',
+                        default='/path/to/datasets/opencell/opencell_dataset/single_cells/metadata/dataset1/',
                         help='Directory containing train.csv, val.csv, test.csv')
     parser.add_argument('--output_dir', type=str,
-                        default='/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell_embeddings/esm2',
+                        default='/path/to/datasets/opencell_embeddings/esm2',
                         help='Output directory for embeddings')
     parser.add_argument('--cache_dir', type=str,
-                        default='/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell_embeddings/protein_sequences',
+                        default='/path/to/datasets/opencell_embeddings/protein_sequences',
                         help='Directory to cache protein sequences')
     parser.add_argument('--esm2_model', type=str, default='esm2_t33_650M_UR50D',
                         choices=['esm2_t6_8M_UR50D', 'esm2_t12_35M_UR50D', 'esm2_t30_150M_UR50D',

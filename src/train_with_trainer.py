@@ -67,7 +67,7 @@ def main():
     rank, world_size, local_rank, is_distributed = setup_distributed()
 
     # Load config
-    code_base_path = '/lustre/groups/aih/amirhossein.kardoost/codes/single-cell-foundation-model/single-cell-foundation-model/'
+    code_base_path = '/path/to/repository/'
 
     # Use provided config or default
     if cmd_args.config is not None:

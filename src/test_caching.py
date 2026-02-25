@@ -11,7 +11,7 @@ def test_caching():
     """Test the caching functionality with different cache rates."""
 
     # Path to CSV (adjust if needed)
-    code_base_path = '/lustre/groups/aih/amirhossein.kardoost/codes/single-cell-foundation-model/single-cell-foundation-model/'
+    code_base_path = '/path/to/repository/'
     csv_path = os.path.join(code_base_path, "data/opencell_metadata/train.csv")
 
     print("=" * 80)

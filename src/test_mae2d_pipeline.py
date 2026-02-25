@@ -32,7 +32,7 @@ def test_data_loading():
     print("TEST 1: Data Loading with Max Projection")
     print("="*60)
 
-    csv_path = "/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/train.csv"
+    csv_path = "/path/to/datasets/opencell/opencell_dataset/single_cells/metadata/dataset1/train.csv"
 
     # Create dataset with max projection
     transform = get_opencell_2d_train_transforms(flip_prob=0.0, rotate_prob=0.0)
@@ -177,7 +177,7 @@ def main():
     print("="*60)
 
     # Load config
-    code_base_path = '/lustre/groups/aih/amirhossein.kardoost/codes/single-cell-foundation-model/single-cell-foundation-model/'
+    code_base_path = '/path/to/repository/'
     config_path = os.path.join(code_base_path, 'configs/opencell_2d.yaml')
     args = get_conf(config_path)
 

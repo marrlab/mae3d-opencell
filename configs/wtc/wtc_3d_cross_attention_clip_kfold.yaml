@@ -25,11 +25,11 @@ wandb_id: None
 # Dataset
 dataset: wtc
 json_list: null
-data_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11
-csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/kfold5/fold0
+data_path: /path/to/datasets/wtc11
+csv_path: /path/to/datasets/wtc11/kfold5/fold0
 
 # Output (overridden per-fold by the training script)
-output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/mae_wtc_3d_cross_attention_clip_kfold5/${run_name}
+output_dir: /path/to/datasets/wtc11/mae_wtc_3d_cross_attention_clip_kfold5/${run_name}
 ckpt_dir: ${output_dir}/ckpts
 
 # ========================================
@@ -40,7 +40,7 @@ use_esm2_conditioning: false
 esm2_embed_dim: 1280
 
 # Overridden per-fold by the training script via --esm2_embedding_path.
-esm2_embedding_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/wtc11/esm2_embeddings
+esm2_embedding_path: /path/to/datasets/wtc11/esm2_embeddings
 
 # ========================================
 # CLIP / InfoNCE Configuration

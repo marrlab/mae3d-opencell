@@ -278,7 +278,7 @@ def main():
     parser.add_argument('--output_dir', type=str, required=True,
                         help='Directory to save embeddings and plots')
     parser.add_argument('--localization_csv', type=str,
-                        default='/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-localization-annotations/opencell-localization-annotations.csv',
+                        default='/path/to/datasets/opencell/opencell_metadata_raw/protein-localization-annotations/opencell-localization-annotations.csv',
                         help='Path to localization annotations CSV')
     parser.add_argument('--batch_size', type=int, default=32,
                         help='Batch size for inference (can be larger for 2D)')

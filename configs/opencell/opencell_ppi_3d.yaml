@@ -16,9 +16,9 @@ pretrain_mask_ratio: 0.75  # Mask ratio used in MAE pretraining
 
 # dataset
 dataset: opencell_ppi
-csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/
-ppi_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-protein-interactions/opencell-protein-interactions.csv
-abundance_csv_path: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-abundance/opencell-protein-abundance.csv
+csv_path: /path/to/datasets/opencell/opencell_dataset/single_cells/metadata/dataset1/
+ppi_csv_path: /path/to/datasets/opencell/opencell_metadata_raw/protein-protein-interactions/opencell-protein-interactions.csv
+abundance_csv_path: /path/to/datasets/opencell/opencell_metadata_raw/protein-abundance/opencell-protein-abundance.csv
 
 # PPI filtering thresholds
 pval_threshold: 5.0  # Minimum -log10(pval) threshold
@@ -30,7 +30,7 @@ n_abundance_buckets: 10  # Number of buckets for abundance-matched negative samp
 n_negatives_per_positive: 1  # Ratio of negative to positive pairs
 
 # output
-output_dir: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/ppi_results/${run_name}
+output_dir: /path/to/datasets/opencell/ppi_results/${run_name}
 ckpt_dir: ${output_dir}/ckpts
 
 # ========================================
@@ -90,7 +90,7 @@ margin: 0.5  # Margin for contrastive loss
 temperature: 0.1  # Temperature for BCEWithLogits loss
 
 # pretrained weights
-pretrain: /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/mae_opencell_3d/mae3d_vit_base_opencell_mask${pretrain_mask_ratio}/mae3d_vit_base_opencell_mask${pretrain_mask_ratio}/ckpts/checkpoint_0009.pth.tar
+pretrain: /path/to/datasets/opencell/mae_opencell_3d/mae3d_vit_base_opencell_mask${pretrain_mask_ratio}/mae3d_vit_base_opencell_mask${pretrain_mask_ratio}/ckpts/checkpoint_0009.pth.tar
 
 # fine-tuning strategy
 freeze_encoder: true  # Linear probing: only train projection head

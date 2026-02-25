@@ -712,13 +712,13 @@ def main():
     parser.add_argument('--checkpoint_3d', type=str, required=True)
 
     parser.add_argument('--csv_path', type=str,
-                        default='/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/')
+                        default='/path/to/datasets/opencell/opencell_dataset/single_cells/metadata/dataset1/')
     parser.add_argument('--embedding_dir', type=str,
-                        default='/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/subcell_pca384')
+                        default='/path/to/datasets/opencell/subcell_pca384')
     parser.add_argument('--ppi_path', type=str,
-                        default='/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-protein-interactions/opencell-protein-interactions.csv')
+                        default='/path/to/datasets/opencell/opencell_metadata_raw/protein-protein-interactions/opencell-protein-interactions.csv')
     parser.add_argument('--abundance_path', type=str,
-                        default='/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-abundance/opencell-protein-abundance.csv')
+                        default='/path/to/datasets/opencell/opencell_metadata_raw/protein-abundance/opencell-protein-abundance.csv')
 
     parser.add_argument('--pval_threshold', type=float, default=5.0)
     parser.add_argument('--enrichment_threshold', type=float, default=2.5)

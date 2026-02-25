@@ -386,9 +386,9 @@ def main():
 
     # PPI data
     parser.add_argument('--ppi_path', type=str,
-                        default='/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-protein-interactions/opencell-protein-interactions.csv')
+                        default='/path/to/datasets/opencell/opencell_metadata_raw/protein-protein-interactions/opencell-protein-interactions.csv')
     parser.add_argument('--abundance_path', type=str,
-                        default='/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_metadata_raw/protein-abundance/opencell-protein-abundance.csv')
+                        default='/path/to/datasets/opencell/opencell_metadata_raw/protein-abundance/opencell-protein-abundance.csv')
 
     # Filtering / evaluation
     parser.add_argument('--pval_threshold',          type=float, default=5.0)

@@ -65,7 +65,7 @@ def main():
     cmd_args = parser.parse_args()
 
     # Load config
-    code_base_path = '/lustre/groups/aih/amirhossein.kardoost/codes/single-cell-foundation-model/single-cell-foundation-model/'
+    code_base_path = '/path/to/repository/'
     config_path = cmd_args.config
     if not os.path.isabs(config_path):
         config_path = os.path.join(code_base_path, config_path)

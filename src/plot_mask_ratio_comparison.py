@@ -187,10 +187,10 @@ def create_summary_table(results_2d, results_3d, metrics, mask_ratios, output_pa
 def main():
     parser = argparse.ArgumentParser(description='Plot mask ratio comparison for 2D vs 3D')
     parser.add_argument('--results_dir', type=str,
-                        default='/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/localization_results',
+                        default='/path/to/datasets/opencell/localization_results',
                         help='Base directory containing localization results')
     parser.add_argument('--output_dir', type=str,
-                        default='/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/localization_results/comparison_plots',
+                        default='/path/to/datasets/opencell/localization_results/comparison_plots',
                         help='Directory to save plots')
     parser.add_argument('--mask_ratios', type=float, nargs='+',
                         default=[0.7, 0.75, 0.8, 0.85, 0.9],
