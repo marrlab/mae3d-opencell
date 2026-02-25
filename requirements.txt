@@ -10,8 +10,4 @@ pandas
 nvidia-ml-py
 scikit-learn
 tqdm
-
-# VLM dependencies
-transformers==4.44.2  # PyTorch 2.1.2 compatible
-accelerate>=0.27.0
-peft>=0.10.0
+transformers==4.44.2  # For ESM2 protein language model
