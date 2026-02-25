@@ -44,7 +44,6 @@ src/
 ├── data/
 │   ├── opencell/           # OpenCell dataset & transforms
 │   │   ├── dataset.py              # Single-cell dataset
-│   │   ├── fov_dataset.py          # FOV (field-of-view) dataset
 │   │   ├── localization_dataset.py # Classification dataset
 │   │   └── transforms.py           # Channel-wise normalization
 │   └── base/               # Base classes for future datasets
@@ -58,19 +57,16 @@ src/
 ├── evaluation/
 │   └── opencell/           # OpenCell-specific metrics
 │
-├── scripts/                # Training/evaluation scripts
-└── train_fov.py            # FOV training script
+└── scripts/                # Training/evaluation scripts
 
 configs/opencell/           # Configuration files
 ├── opencell_2d.yaml                # MAE 2D pretraining (single-cell)
 ├── opencell_3d.yaml                # MAE 3D pretraining (single-cell)
-├── opencell_2d_fov.yaml            # MAE 2D pretraining (FOV)
-├── opencell_3d_fov.yaml            # MAE 3D pretraining (FOV)
 ├── opencell_localization_2d.yaml   # Fine-tuning
 └── opencell_localization_3d.yaml   # Fine-tuning
 
 test/                       # Test scripts
-└── test_normalization.py   # Supports both single-cell and FOV
+└── test_normalization.py   # Test data pipeline and normalization
 ```
 
 ---
@@ -83,10 +79,7 @@ test/                       # Test scripts
 **Source:** [OpenCell Download](https://opencell.sf.czbiohub.org/download)
 **Channels:** 2 (nucleus, protein)
 **Format:** 3D TIFF files (Z, C, Y, X)
-
-**Two modes supported:**
-- **Single-cell:** Pre-cropped images (100, 2, 176, 176) - one cell per image
-- **FOV (Field-of-View):** Full raw images (51, 2, 600, 600) - multiple cells per image
+**Image dimensions:** Pre-cropped single cells (100, 2, 176, 176) - Z, C, H, W
 
 ### Training
 
@@ -110,34 +103,7 @@ python src/train_with_trainer.py --config configs/opencell/opencell_2d.yaml
 
 Uses max-projected images (Z-axis) for faster training.
 
-#### 3. MAE Pretraining on FOV (Field-of-View)
-
-Train on full field-of-view images (no cropping):
-
-```bash
-# FOV 3D
-python src/train_fov.py --config configs/opencell/opencell_3d_fov.yaml
-
-# FOV 2D (max-projected)
-python src/train_fov.py --config configs/opencell/opencell_2d_fov.yaml --use_2d
-```
-
-**Key differences from single-cell:**
-- Full 600×600 images (no random cropping)
-- Larger patch sizes (20×20 vs 8×8)
-- Smaller batch size due to memory (1 vs 2)
-- Multiple cells per image
-
-**Mixed training (single-cell + FOV):**
-```bash
-python src/train_fov.py \
-    --config configs/opencell/opencell_3d_fov.yaml \
-    --mixed_training \
-    --single_cell_csv /path/to/train.csv \
-    --fov_ratio 0.3
-```
-
-#### 4. Fine-tuning: Protein Localization
+#### 3. Fine-tuning: Protein Localization
 
 ```bash
 python src/train_with_trainer.py --config configs/opencell/opencell_localization_3d.yaml
@@ -227,22 +193,12 @@ python src/train_with_trainer.py \
 
 ### Test Normalization
 
-**Single-cell:**
 ```bash
 # 3D
 python test/test_normalization.py --config configs/opencell/opencell_3d.yaml
 
 # 2D
 python test/test_normalization.py --config configs/opencell/opencell_2d.yaml --use_2d
-```
-
-**FOV (Field-of-View):**
-```bash
-# FOV 3D
-python test/test_normalization.py --config configs/opencell/opencell_3d_fov.yaml --fov
-
-# FOV 2D
-python test/test_normalization.py --config configs/opencell/opencell_2d_fov.yaml --fov --use_2d
 ```
 
 ### Resume Training
@@ -267,15 +223,11 @@ torchrun --nproc_per_node=4 src/train_with_trainer.py \
 **Default output directory:**
 ```
 /path/to/datasets/opencell/
-├── mae_opencell_3d/              # Single-cell MAE 3D
+├── mae_opencell_3d/              # MAE 3D
 │   └── {run_name}/
 │       ├── ckpts/                # Checkpoints
 │       └── logs/                 # Logs
-├── mae_opencell_3d_fov/          # FOV MAE 3D
-│   └── {run_name}/
-│       ├── ckpts/
-│       └── logs/
-├── mae_opencell_2d_fov/          # FOV MAE 2D
+├── mae_opencell_2d/              # MAE 2D
 │   └── {run_name}/
 │       ├── ckpts/
 │       └── logs/
@@ -357,11 +309,8 @@ from data.opencell.dataset import OpenCellDataset
 ## Next Steps
 
 ### Completed ✅
-- [x] MAE 3D pretraining on OpenCell (single-cell)
-- [x] MAE 2D pretraining on OpenCell (single-cell)
-- [x] FOV (field-of-view) dataset support
-- [x] MAE 3D/2D pretraining on FOV images
-- [x] Mixed training (single-cell + FOV)
+- [x] MAE 3D pretraining on OpenCell
+- [x] MAE 2D pretraining on OpenCell
 - [x] Protein localization classification
 - [x] Channel-wise normalization
 - [x] Organized project structure
