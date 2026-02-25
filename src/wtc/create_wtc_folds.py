@@ -27,8 +27,8 @@ carve one out of the training folds if needed.
 Usage
 -----
     python src/wtc/create_wtc_folds.py \
-        --info_path   /ictstr01/.../wtc11/wtc11_cells_info.csv \
-        --output_path /ictstr01/.../wtc11/wtc11_cells_info_5fold.csv \
+        --info_path   /path/to/.../wtc11/wtc11_cells_info.csv \
+        --output_path /path/to/.../wtc11/wtc11_cells_info_5fold.csv \
         --n_folds 5 \
         --seed 42
 """

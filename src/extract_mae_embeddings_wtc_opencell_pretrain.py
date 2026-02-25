@@ -18,9 +18,9 @@ Usage
 -----
     python src/extract_mae_embeddings_wtc_opencell_pretrain.py \\
         --config   configs/wtc/wtc_3d_cross_attention_opencell_pretrain_kfold.yaml \\
-        --checkpoint /ictstr01/.../opencell/mae_opencell_3d_cross_attention_clip_kfold5/run3/fold0/ckpts/checkpoint_0004.pth.tar \\
-        --output_dir /ictstr01/.../wtc11/mae_wtc_3d_opencell_pretrain/fold0/mae3d_embeddings \\
-        --csv_path   /ictstr01/.../wtc11/kfold5/fold0 \\
+        --checkpoint /path/to/.../opencell/mae_opencell_3d_cross_attention_clip_kfold5/run3/fold0/ckpts/checkpoint_0004.pth.tar \\
+        --output_dir /path/to/.../wtc11/mae_wtc_3d_opencell_pretrain/fold0/mae3d_embeddings \\
+        --csv_path   /path/to/.../wtc11/kfold5/fold0 \\
         --pool_mode  concat
 """
 

@@ -352,12 +352,12 @@ def _rebuild_similarities(results_dir, ppi_path, abundance_path, seed=42):
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 _DEFAULT_PPI_PATH = (
-    '/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset'
+    '/path/to/groups/labs/lab/user/datasets/SingleCellImagesDataset'
     '/opencell/opencell_metadata_raw/protein-protein-interactions'
     '/opencell-protein-interactions.csv'
 )
 _DEFAULT_ABUNDANCE_PATH = (
-    '/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset'
+    '/path/to/groups/labs/lab/user/datasets/SingleCellImagesDataset'
     '/opencell/opencell_metadata_raw/protein-abundance'
     '/opencell-protein-abundance.csv'
 )

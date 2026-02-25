@@ -13,8 +13,8 @@ so that the standard trainers can load the data directly.
 Usage
 -----
     python src/wtc/create_wtc_kfold_csvs.py \
-        --info_path /ictstr01/.../wtc11/wtc11_cells_info_5fold.csv \
-        --output_dir /ictstr01/.../wtc11/kfold5 \
+        --info_path /path/to/.../wtc11/wtc11_cells_info_5fold.csv \
+        --output_dir /path/to/.../wtc11/kfold5 \
         --n_folds 5
 """
 
@@ -31,7 +31,7 @@ def parse_args():
     parser.add_argument(
         "--info_path",
         default=(
-            "/ictstr01/groups/labs/marr/qscd01/datasets/"
+            "/path/to/groups/labs/lab/user/datasets/"
             "SingleCellImagesDataset/wtc11/wtc11_cells_info_5fold.csv"
         ),
         help="Path to wtc11_cells_info_5fold.csv (output of create_wtc_folds.py)",
@@ -39,7 +39,7 @@ def parse_args():
     parser.add_argument(
         "--output_dir",
         default=(
-            "/ictstr01/groups/labs/marr/qscd01/datasets/"
+            "/path/to/groups/labs/lab/user/datasets/"
             "SingleCellImagesDataset/wtc11/kfold5"
         ),
         help="Root directory for per-fold CSV files",

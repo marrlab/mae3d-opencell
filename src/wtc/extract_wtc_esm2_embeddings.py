@@ -19,20 +19,20 @@ Usage
 -----
     # GPU (recommended)
     python src/wtc/extract_wtc_esm2_embeddings.py \
-        --info_csv  /ictstr01/.../wtc11/wtc11_cells_info_5fold.csv \
-        --output_dir /ictstr01/.../wtc11/esm2_embeddings \
+        --info_csv  /path/to/.../wtc11/wtc11_cells_info_5fold.csv \
+        --output_dir /path/to/.../wtc11/esm2_embeddings \
         --device cuda:0
 
     # CPU fallback
     python src/wtc/extract_wtc_esm2_embeddings.py \
-        --info_csv  /ictstr01/.../wtc11/wtc11_cells_info_5fold.csv \
-        --output_dir /ictstr01/.../wtc11/esm2_embeddings \
+        --info_csv  /path/to/.../wtc11/wtc11_cells_info_5fold.csv \
+        --output_dir /path/to/.../wtc11/esm2_embeddings \
         --device cpu
 
     # Use Hugging Face transformers instead of fair-esm
     python src/wtc/extract_wtc_esm2_embeddings.py \
-        --info_csv  /ictstr01/.../wtc11/wtc11_cells_info_5fold.csv \
-        --output_dir /ictstr01/.../wtc11/esm2_embeddings \
+        --info_csv  /path/to/.../wtc11/wtc11_cells_info_5fold.csv \
+        --output_dir /path/to/.../wtc11/esm2_embeddings \
         --device cuda:0 --use_transformers
 """
 
@@ -127,7 +127,7 @@ def main():
     parser.add_argument(
         '--info_csv',
         default=(
-            "/ictstr01/groups/labs/marr/qscd01/datasets/"
+            "/path/to/groups/labs/lab/user/datasets/"
             "SingleCellImagesDataset/wtc11/wtc11_cells_info_5fold.csv"
         ),
         help="Path to wtc11_cells_info_5fold.csv (must have 'structure_name' column).",
@@ -135,7 +135,7 @@ def main():
     parser.add_argument(
         '--output_dir',
         default=(
-            "/ictstr01/groups/labs/marr/qscd01/datasets/"
+            "/path/to/groups/labs/lab/user/datasets/"
             "SingleCellImagesDataset/wtc11/esm2_embeddings"
         ),
         help="Directory to write embeddings.npy and protein_names.txt.",

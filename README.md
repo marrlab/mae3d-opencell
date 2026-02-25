@@ -2,7 +2,7 @@
 
 Foundation models for single-cell microscopy images using 2D/3D Masked Autoencoders (MAE).
 
-**Datasets:** OpenCell (current), WTC-11, HPA, JUMP (future)
+**Datasets:** OpenCell (current), WTC-11 (current), HPA, JUMP (future)
 **Base Code:** Adapted from [SelfMedMAE](https://github.com/cvlab-stonybrook/SelfMedMAE/tree/main)
 
 ---
@@ -79,7 +79,7 @@ test/                       # Test scripts
 
 ### OpenCell Dataset
 
-**Location:** `/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell`
+**Location:** `/path/to/datasets/opencell`
 **Source:** [OpenCell Download](https://opencell.sf.czbiohub.org/download)
 **Channels:** 2 (nucleus, protein)
 **Format:** 3D TIFF files (Z, C, Y, X)
@@ -266,7 +266,7 @@ torchrun --nproc_per_node=4 src/train_with_trainer.py \
 
 **Default output directory:**
 ```
-/ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/
+/path/to/datasets/opencell/
 ├── mae_opencell_3d/              # Single-cell MAE 3D
 │   └── {run_name}/
 │       ├── ckpts/                # Checkpoints
@@ -425,7 +425,7 @@ python src/data/opencell/create_vlm_dataset.py \
     --sample_qa_per_image 10
 
 # For example
-python src/data/opencell/create_vlm_dataset.py --output_dir /ictstr01/groups/labs/marr/qscd01/datasets/SingleCellImagesDataset/opencell/opencell_dataset/single_cells/metadata/dataset1/vlm_dataset --expanded_format
+python src/data/opencell/create_vlm_dataset.py --output_dir /path/to/datasets/opencell/opencell_dataset/single_cells/metadata/dataset1/vlm_dataset --expanded_format
 ```
 
 
@@ -631,10 +631,10 @@ Website: https://opencell.czbiohub.org
   Step 3 — Create fold-specific ESM2 embedding files
 
   python src/wtc/create_wtc_kfold_esm2_embeddings.py \
-      --protein_emb_file   /ictstr01/.../wtc11/esm2_embeddings/embeddings.npy \
-      --protein_names_file /ictstr01/.../wtc11/esm2_embeddings/protein_names.txt \
-      --kfold_dir          /ictstr01/.../wtc11/kfold5 \
-      --output_dir         /ictstr01/.../wtc11/esm2_embeddings_kfold5
+      --protein_emb_file   /path/to/.../wtc11/esm2_embeddings/embeddings.npy \
+      --protein_names_file /path/to/.../wtc11/esm2_embeddings/protein_names.txt \
+      --kfold_dir          /path/to/.../wtc11/kfold5 \
+      --output_dir         /path/to/.../wtc11/esm2_embeddings_kfold5
 
   ---
   Step 4 — Train FFT models (Steps 2–4 can overlap; FFT doesn't need ESM2)

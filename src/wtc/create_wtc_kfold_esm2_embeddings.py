@@ -38,19 +38,19 @@ Option B — global cell-level arrays (same format as OpenCell ESM2 embeddings):
 Usage (Option A)
 ----------------
     python src/wtc/create_wtc_kfold_esm2_embeddings.py \\
-        --protein_emb_file   /ictstr01/.../wtc11/esm2_embeddings/embeddings.npy \\
-        --protein_names_file /ictstr01/.../wtc11/esm2_embeddings/protein_names.txt \\
-        --kfold_dir          /ictstr01/.../wtc11/kfold5 \\
-        --output_dir         /ictstr01/.../wtc11/esm2_embeddings_kfold5 \\
+        --protein_emb_file   /path/to/.../wtc11/esm2_embeddings/embeddings.npy \\
+        --protein_names_file /path/to/.../wtc11/esm2_embeddings/protein_names.txt \\
+        --kfold_dir          /path/to/.../wtc11/kfold5 \\
+        --output_dir         /path/to/.../wtc11/esm2_embeddings_kfold5 \\
         --n_folds 5
 
 Usage (Option B)
 ----------------
     python src/wtc/create_wtc_kfold_esm2_embeddings.py \\
-        --global_csv         /ictstr01/.../wtc11/wtc11_cells_info_5fold.csv \\
-        --global_esm2_file   /ictstr01/.../wtc11/esm2_embeddings/all_cells.npy \\
-        --kfold_dir          /ictstr01/.../wtc11/kfold5 \\
-        --output_dir         /ictstr01/.../wtc11/esm2_embeddings_kfold5 \\
+        --global_csv         /path/to/.../wtc11/wtc11_cells_info_5fold.csv \\
+        --global_esm2_file   /path/to/.../wtc11/esm2_embeddings/all_cells.npy \\
+        --kfold_dir          /path/to/.../wtc11/kfold5 \\
+        --output_dir         /path/to/.../wtc11/esm2_embeddings_kfold5 \\
         --n_folds 5
 """
 
@@ -221,7 +221,7 @@ def main():
     parser.add_argument(
         '--kfold_dir',
         default=(
-            "/ictstr01/groups/labs/marr/qscd01/datasets/"
+            "/path/to/groups/labs/lab/user/datasets/"
             "SingleCellImagesDataset/wtc11/kfold5"
         ),
         help="Root directory of fold CSVs (fold0/train.csv, fold0/val.csv, …).",
@@ -229,7 +229,7 @@ def main():
     parser.add_argument(
         '--output_dir',
         default=(
-            "/ictstr01/groups/labs/marr/qscd01/datasets/"
+            "/path/to/groups/labs/lab/user/datasets/"
             "SingleCellImagesDataset/wtc11/esm2_embeddings_kfold5"
         ),
         help="Root output directory; per-fold .npy files go into {output_dir}/fold{k}/.",

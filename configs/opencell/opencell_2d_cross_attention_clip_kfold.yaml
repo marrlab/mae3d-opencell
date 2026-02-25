@@ -12,10 +12,10 @@
 #        sbatch --array=0-4 scripts/train_mae2d_cross_attention_fft_kfold_1gpu.sbatch
 #   2. Create fold-specific ESM2 embeddings (shared with 3D CLIP kfold):
 #        python src/create_kfold_esm2_embeddings.py \
-#            --global_csv_dir  /ictstr01/.../metadata/dataset1 \
-#            --global_esm2_dir /ictstr01/.../esm2_embeddings \
-#            --kfold_dir       /ictstr01/.../metadata/kfold5 \
-#            --output_dir      /ictstr01/.../esm2_embeddings_kfold5 \
+#            --global_csv_dir  /path/to/.../metadata/dataset1 \
+#            --global_esm2_dir /path/to/.../esm2_embeddings \
+#            --kfold_dir       /path/to/.../metadata/kfold5 \
+#            --output_dir      /path/to/.../esm2_embeddings_kfold5 \
 #            --n_folds 5
 
 # Architecture

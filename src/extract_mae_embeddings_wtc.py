@@ -11,7 +11,7 @@ Usage
         --config  configs/wtc/wtc_3d_cross_attention_fft_kfold.yaml \
         --checkpoint /path/to/checkpoint.pth.tar \
         --output_dir /path/to/mae3d_embeddings \
-        --csv_path   /ictstr01/.../wtc11/kfold5/fold0 \
+        --csv_path   /path/to/.../wtc11/kfold5/fold0 \
         --model_type mae3d_cross_attention
 
     # 2D Cross-Attention
@@ -19,7 +19,7 @@ Usage
         --config  configs/wtc/wtc_2d_cross_attention_fft_kfold.yaml \
         --checkpoint /path/to/checkpoint.pth.tar \
         --output_dir /path/to/mae2d_embeddings \
-        --csv_path   /ictstr01/.../wtc11/kfold5/fold0 \
+        --csv_path   /path/to/.../wtc11/kfold5/fold0 \
         --model_type mae2d_cross_attention
 """
 
