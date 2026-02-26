@@ -1,6 +1,6 @@
-# Single-Cell Foundation Models
+# 3D Masked Autoencoders are Robust Learners of Volumetric and Multimodal Cellular Representations for Microscopy
 
-Foundation models for single-cell microscopy images using 2D/3D Masked Autoencoders (MAE).
+2D/3D Masked Autoencoders (MAE) for single-cell microscopy images.
 
 **Datasets:** OpenCell
 **Base Code:** Adapted from [SelfMedMAE](https://github.com/cvlab-stonybrook/SelfMedMAE/tree/main)
