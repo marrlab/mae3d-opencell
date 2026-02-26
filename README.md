@@ -2,7 +2,7 @@
 
 Foundation models for single-cell microscopy images using 2D/3D Masked Autoencoders (MAE).
 
-**Datasets:** OpenCell, WTC-11
+**Datasets:** OpenCell
 **Base Code:** Adapted from [SelfMedMAE](https://github.com/cvlab-stonybrook/SelfMedMAE/tree/main)
 
 ---
@@ -123,103 +123,6 @@ python src/evaluate_localization.py \
 ```
 
 **Metrics:** mAP, AUC, F1 (macro/micro), per-class metrics
-
----
-
-## WTC-11 Dataset
-
-### Dataset Overview
-
-**Proteins:** 25 proteins (including AAVS1 control)
-**Channels:** 2 (nucleus, protein)
-**Localization categories:** 15 classes
-**Format:** K-fold cross-validation (typically 5-fold)
-
-**Localization categories:**
-cell_contact, centrosome, chromatin, cytoplasmic, cytoskeleton, er, focal_adhesions, golgi, mitochondria, nuclear_membrane, nuclear_punctae, nucleolus_fc_dfc, nucleolus_gc, peroxisome, vesicles
-
-### Training Pipeline
-
-#### Step 1: Extract ESM2 Embeddings
-
-```bash
-# Extract ESM2 embeddings for 25 WTC proteins
-sbatch scripts/wtc/extract_wtc_esm2_embeddings.sbatch
-```
-
-**Output:**
-```
-wtc11/esm2_embeddings/
-├── embeddings.npy        # (25, 1280) - one vector per protein
-├── protein_names.txt     # 25 gene symbols
-└── wtc_sequences.json    # UniProt cache
-```
-
-**Note:** AAVS1 is a control locus with no protein sequence → zero embedding
-
-#### Step 2: Create Fold-Specific ESM2 Embeddings
-
-```bash
-python src/wtc/create_wtc_kfold_esm2_embeddings.py \
-    --protein_emb_file   /path/to/wtc11/esm2_embeddings/embeddings.npy \
-    --protein_names_file /path/to/wtc11/esm2_embeddings/protein_names.txt \
-    --kfold_dir          /path/to/wtc11/kfold5 \
-    --output_dir         /path/to/wtc11/esm2_embeddings_kfold5
-```
-
-#### Step 3: Train MAE with Protein Conditioning
-
-**FFT models (frequency-domain conditioning):**
-```bash
-sbatch --array=0-4 scripts/wtc/train_mae3d_cross_attention_fft_kfold_1gpu.sbatch
-sbatch --array=0-4 scripts/wtc/train_mae2d_cross_attention_fft_kfold_1gpu.sbatch
-```
-
-**CLIP models (contrastive learning on top of FFT):**
-```bash
-sbatch --array=0-4 scripts/wtc/train_mae3d_cross_attention_clip_kfold_1gpu.sbatch
-sbatch --array=0-4 scripts/wtc/train_mae2d_cross_attention_clip_kfold_1gpu.sbatch
-```
-
-### Localization Task (Downstream)
-
-#### Extract MAE Embeddings
-
-```bash
-# For 3D FFT model (example)
-sbatch --array=0-4 scripts/wtc/extract_wtc_mae3d_fft_kfold_embeddings.sbatch
-
-# For other variants: 2d_fft, 3d_clip, 2d_clip
-```
-
-#### Train Linear Probe
-
-```bash
-# For 3D FFT model (example)
-sbatch --array=0-4 scripts/wtc/train_localization_emb_3d_fft_kfold.sbatch
-
-# Or manually:
-python src/train_localization_wtc.py \
-    --config configs/wtc/wtc_localization_emb_3d_fft_kfold.yaml
-```
-
-#### Evaluate
-
-```bash
-# For 3D FFT model (example)
-sbatch --array=0-4 scripts/wtc/evaluate_localization_emb_3d_fft_kfold.sbatch
-
-# Or manually:
-python src/evaluate_localization_wtc.py \
-    --config configs/wtc/wtc_localization_emb_3d_fft_kfold.yaml \
-    --checkpoint /path/to/checkpoint.pth.tar
-```
-
-**Available model variants:**
-- `3d_fft`: 3D MAE with FFT conditioning
-- `2d_fft`: 2D MAE with FFT conditioning
-- `3d_clip`: 3D MAE with CLIP contrastive learning
-- `2d_clip`: 2D MAE with CLIP contrastive learning
 
 ---
 

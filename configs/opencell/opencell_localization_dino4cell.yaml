@@ -1,5 +1,5 @@
 # ========================================
-# DINO4Cell WTC Localization (Copied from opencell_localization_subcell_pca384.yaml)
+# DINO4Cell OpenCell Localization (Copied from opencell_localization_subcell_pca384.yaml)
 # ========================================
 # This config uses DINO4Cells embeddings (768) for
 # classification, making it directly comparable with MAE3D.
