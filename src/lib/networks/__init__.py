@@ -8,11 +8,6 @@ from .cross_attention import (
     ChannelCrossAttentionEncoder,
     ChannelCrossAttentionDecoder
 )
-from .protein_modality import (
-    ESM2CrossAttention,
-    ESM2ConditionedChannelBlock,
-    DualChannelTransformerBlockESM2
-)
 
 __all__ = [
     'MAEViTEncoder',
@@ -25,7 +20,4 @@ __all__ = [
     'DualChannelTransformerBlock',
     'ChannelCrossAttentionEncoder',
     'ChannelCrossAttentionDecoder',
-    'ESM2CrossAttention',
-    'ESM2ConditionedChannelBlock',
-    'DualChannelTransformerBlockESM2'
 ]

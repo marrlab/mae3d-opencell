@@ -1,0 +1,48 @@
+[project]
+name = "mae3d-protein-modality-microscopy"
+version = "0.1.0"
+description = "2D/3D Masked Autoencoders with InfoNCE protein alignment (MAE2D*/MAE3D*) for OpenCell microscopy"
+readme = "README.md"
+requires-python = "==3.11.*"
+
+# Pinned to the versions used for the reported experiments (conda env `sc_project`,
+# Python 3.11.9, CUDA 11.8, cuDNN 8.7). torch/torchvision are resolved from the
+# PyTorch CUDA 11.8 wheel index configured under [tool.uv.sources] below.
+dependencies = [
+    "torch==2.1.2",
+    "torchvision==0.16.2",
+    "numpy==1.26.4",          # torch 2.1.x requires numpy < 2
+    "monai[itk]==1.3.2",
+    "nibabel==3.2.1",
+    "omegaconf==2.1.1",
+    "timm==0.4.12",
+    "transformers==4.44.2",   # ESM2 protein language model (HF backend)
+    "wandb==0.23.1",
+    "tifffile==2025.10.16",
+    "matplotlib==3.10.8",
+    "pandas==2.3.3",
+    "scikit-learn==1.8.0",
+    "scipy==1.16.3",
+    "nvidia-ml-py==13.590.44",
+    "tqdm==4.67.1",
+]
+
+[project.optional-dependencies]
+# Optional second backend for ESM2 extraction (`extract_esm2_embeddings.py --use_transformers`
+# works without this; fair-esm enables the native `--esm2_model` path).
+esm = ["fair-esm>=2.0.0"]
+
+[tool.uv]
+# The code runs as scripts on sys.path (src/ layout), not as an installed package,
+# so do not try to build/install the project root — only its dependencies.
+package = false
+
+# Pull torch/torchvision from the CUDA 11.8 wheel index for reproducible GPU builds.
+[[tool.uv.index]]
+name = "pytorch-cu118"
+url = "https://download.pytorch.org/whl/cu118"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu118" }
+torchvision = { index = "pytorch-cu118" }

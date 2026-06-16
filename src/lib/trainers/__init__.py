@@ -4,19 +4,20 @@ from .mae2d_trainer import MAE2DTrainer
 from .mae3d_cross_attention_trainer import MAE3DChannelCrossAttentionTrainer
 from .mae3d_cross_attention_fft_trainer import MAE3DChannelCrossAttentionFFTTrainer
 from .mae2d_cross_attention_fft_trainer import MAE2DChannelCrossAttentionFFTTrainer
-from .mae3d_cross_attention_fft_sup_loss_trainer import MAE3DChannelCrossAttentionFFTSupLossTrainer
-from .mae3d_cross_attention_distill_trainer import MAE3DChannelCrossAttentionDistillTrainer
-from .mae3d_cross_attention_z_distill_trainer import MAE3DChannelCrossAttentionZDistillTrainer
-from .mae3d_cross_attention_esm2_trainer import MAE3DChannelCrossAttentionESM2Trainer
 from .mae3d_cross_attention_clip_trainer import MAE3DChannelCrossAttentionCLIPTrainer
 from .mae2d_cross_attention_clip_trainer import MAE2DChannelCrossAttentionCLIPTrainer
-from .mae3d_cross_attention_concat_trainer import MAE3DChannelCrossAttentionConcatTrainer
 from .localization_trainer import LocalizationTrainer
-from .localization_slice_trainer import LocalizationSliceTrainer
-from .localization_fusion_trainer import LocalizationFusionTrainer
-from .abundance_trainer import AbundanceTrainer
 from .ppi_trainer import PPITrainer
-from .subcell_localization_trainer import SubCellLocalizationTrainer
-from .ppi_subcell_trainer import PPISubCellTrainer
 
-__all__ = ['BaseTrainer', 'MAE3DTrainer', 'MAE2DTrainer', 'MAE3DChannelCrossAttentionTrainer', 'MAE3DChannelCrossAttentionFFTTrainer', 'MAE2DChannelCrossAttentionFFTTrainer', 'MAE3DChannelCrossAttentionFFTSupLossTrainer', 'MAE3DChannelCrossAttentionDistillTrainer', 'MAE3DChannelCrossAttentionZDistillTrainer', 'MAE3DChannelCrossAttentionESM2Trainer', 'MAE3DChannelCrossAttentionCLIPTrainer', 'MAE2DChannelCrossAttentionCLIPTrainer', 'MAE3DChannelCrossAttentionConcatTrainer', 'LocalizationTrainer', 'LocalizationSliceTrainer', 'LocalizationFusionTrainer', 'AbundanceTrainer', 'PPITrainer', 'SubCellLocalizationTrainer', 'PPISubCellTrainer']
+__all__ = [
+    'BaseTrainer',
+    'MAE3DTrainer',
+    'MAE2DTrainer',
+    'MAE3DChannelCrossAttentionTrainer',
+    'MAE3DChannelCrossAttentionFFTTrainer',
+    'MAE2DChannelCrossAttentionFFTTrainer',
+    'MAE3DChannelCrossAttentionCLIPTrainer',
+    'MAE2DChannelCrossAttentionCLIPTrainer',
+    'LocalizationTrainer',
+    'PPITrainer',
+]
