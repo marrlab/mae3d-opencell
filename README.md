@@ -1,5 +1,9 @@
 # 3D Masked Autoencoders are Robust Learners of Volumetric and Multimodal Cellular Representations for Microscopy
 
+<p align="center">
+  <img src="assets/vision_protein_mae.png" width="80%">
+</p>
+
 2D / 3D Masked Autoencoders (MAE) for single-cell microscopy, with an InfoNCE
 loss that aligns the learned image representation to the protein modality
 (ESM2 protein-language-model embeddings).
