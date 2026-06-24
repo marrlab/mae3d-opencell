@@ -151,7 +151,7 @@ All commands are run from the repository root. Add
 ```bash
 # Baseline MAE
 python src/train/opencell/train_mae2d_opencell.py --config configs/opencell/opencell_2d.yaml
-python src/train/opencell/train_mae3d_opencell.py            # uses opencell_3d.yaml
+python src/train/opencell/train_mae3d_opencell.py --config configs/opencell/opencell_3d.yaml
 
 # 3D cross-attention (intermediate)
 python src/train/opencell/train_mae3d_cross_attention_opencell.py \

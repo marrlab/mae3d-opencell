@@ -14,13 +14,17 @@ Both scripts produce identical results - choose based on your preference:
 See src/TRAINER_README.md for detailed comparison.
 
 Usage:
-    # Single GPU
-    python src/train_mae3d_opencell.py
+    # Single GPU (default config)
+    python src/train/opencell/train_mae3d_opencell.py
+
+    # Single GPU with custom config
+    python src/train/opencell/train_mae3d_opencell.py --config configs/opencell/opencell_3d.yaml
 
     # Multi-GPU with torchrun
-    torchrun --nproc_per_node=4 src/train_mae3d_opencell.py
+    torchrun --nproc_per_node=4 src/train/opencell/train_mae3d_opencell.py --config configs/opencell/opencell_3d.yaml
 """
 
+import argparse
 import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -188,8 +192,16 @@ def main():
     code_base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
     if rank == 0:
         print(f'code base path: {code_base_path}')
-    args = get_conf(os.path.join(code_base_path,
-                                 'configs/opencell/opencell_3d.yaml'))
+
+    parser = argparse.ArgumentParser(description='Train OpenCell MAE3D')
+    parser.add_argument('--config', type=str,
+                        default=os.path.join(code_base_path, 'configs/opencell/opencell_3d.yaml'),
+                        help='Path to config file')
+    cmd_args = parser.parse_args()
+    config_path = cmd_args.config
+    if rank == 0:
+        print(f'Loading config from: {config_path}')
+    args = get_conf(config_path)
     set_seed(args.seed + rank)  # Different seed per rank
 
     # Setup logging (redirect stdout to file)
