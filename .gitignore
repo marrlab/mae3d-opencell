@@ -38,8 +38,8 @@ conda/
 *.ckpt
 
 # Data and outputs (important - don't commit large files!)
-data/
-datasets/
+/data/
+/datasets/
 outputs/
 checkpoints/
 ckpts/
